@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro - UPIICSA</title>
+<link rel="stylesheet" href="/css/inicioSesion-registro/index.css">
+<link rel="stylesheet" href="/css/inicioSesion-registro/logo.css">
+
+
+
+</head>
+
+<body>
+  <main class="wrap wrap-reverse">
+
+    <!-- Logo ahora a la izquierda -->
+    <aside class="brand">
+      <div class="brand-inner">
+        <div class="mark">
+            
+<img src="/img/upiicsa.png" alt="Logo UPIICSA" class="logo">
+        </div>
+      </div>
+    </aside>
+
+    <!-- Formulario a la derecha -->
+    <section class="card" aria-label="Registro de usuario">
+      <div class="avatar" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"/>
+        </svg>
+      </div>
+
+      <form id="registerForm" novalidate>
+        <div class="grid">
+          <div class="field">
+            <label class="label" for="first_name">Nombre</label>
+            <input class="input" id="first_name" name="first_name" type="text" required />
+          </div>
+
+          <div class="field">
+            <label class="label" for="last_name_p">Apellido paterno</label>
+            <input class="input" id="last_name_p" name="last_name_p" type="text" required />
+          </div>
+
+          <div class="field">
+            <label class="label" for="last_name_m">Apellido materno</label>
+            <input class="input" id="last_name_m" name="last_name_m" type="text" required />
+          </div>
+
+          <div class="field">
+            <label class="label" for="birth_date">Fecha de nacimiento</label>
+            <input class="input" id="birth_date" name="birth_date" type="date" required />
+          </div>
+
+          <div class="field">
+            <label class="label" for="phone">Número telefónico</label>
+            <input class="input" id="phone" name="phone" type="tel" inputmode="tel"
+                   placeholder="Ej. 5512345678" required />
+          </div>
+
+          <div class="field">
+            <label class="label" for="email">Correo electrónico</label>
+            <input class="input" id="email" name="email" type="email" autocomplete="email" required />
+          </div>
+
+          <div class="field">
+            <label class="label" for="password">Contraseña</label>
+            <input class="input" id="password" name="password" type="password"
+                   autocomplete="new-password" minlength="8" required />
+          </div>
+
+          <div class="field">
+            <label class="label" for="password_confirm">Confirmar contraseña</label>
+            <input class="input" id="password_confirm" name="password_confirm" type="password"
+                   autocomplete="new-password" minlength="8" required />
+          </div>
+        </div>
+
+        <p id="formMsg" class="form-msg" aria-live="polite"></p>
+
+        <div class="actions">
+          <button class="btn" id="submitBtn" type="submit">Crear cuenta</button>
+          <a class="register" href="index.html">Ya tengo cuenta</a>
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+<script type="module" src="./js/registroUsuarios.js"></script>
+
+</body>
+</html>
