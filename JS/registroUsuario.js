@@ -1,5 +1,5 @@
-// js/registroUsuarios.js
-import { supabase } from "./conexionSB.js";
+import { supabase } from "./coneccionSB.js";
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("registerForm");
