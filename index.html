@@ -1,77 +1,76 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login UPIICSA</title>
 
-  <!-- CSS externo -->
-<link rel="stylesheet" href="./css/inicioSesion-registro/index.css">
-<link rel="stylesheet" href="./css/inicioSesion-registro/logo.css">
+  <link rel="stylesheet" href="./css/inicioSesion-registro/index.css">
+  <link rel="stylesheet" href="./css/inicioSesion-registro/logo.css">
 </head>
 
 <body>
   <main class="wrap">
 
-```
-<!-- Panel izquierdo -->
-<section class="card" aria-label="Inicio de sesión">
+    <!-- Panel izquierdo -->
+    <section class="card" aria-label="Inicio de sesión">
 
-  <div class="avatar">
-    <svg viewBox="0 0 24 24">
-      <path d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"/>
-    </svg>
-  </div>
+      <div class="avatar">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"/>
+        </svg>
+      </div>
 
-  <form onsubmit="event.preventDefault(); alert('Login demo ✅');">
+      <form id="formInicioSesion" novalidate>
+        <div class="field">
+          <label class="label" for="correo">Correo</label>
+          <input class="input" id="correo" name="correo" type="email" autocomplete="username" required />
+        </div>
 
-    <div class="field">
-      <label class="label">Usuario</label>
-      <input class="input" type="text" autocomplete="username"/>
-    </div>
+        <div class="field">
+          <label class="label" for="contrasena">Contraseña</label>
 
-    <div class="field">
-      <label class="label">Contraseña</label>
-      <input class="input" type="password" autocomplete="current-password"/>
-    </div>
+          <div class="input-wrap">
+            <input class="input" id="contrasena" name="contrasena" type="password"
+                   autocomplete="current-password" minlength="8" required />
 
-    <div class="row">
-      <label class="check">
-        <input type="checkbox"/>
-        <span>Recuerdame</span>
-      </label>
+            <button type="button" class="btn-ojo" id="btnOjoContrasena" aria-label="Mostrar contraseña">
+              <svg class="icono-ojo" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-2.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
 
-      <a class="link" href="#">Olvidé Mi Contraseña</a>
-    </div>
+        <div class="row">
+          <label class="check">
+            <input id="recordarme" type="checkbox"/>
+            <span>Recuérdame</span>
+          </label>
 
-    <div class="actions">
-      <button class="btn" type="submit">Iniciar sesión</button>
-      <a class="register" href="./registroUsuarios.html">Regístrate</a>
-    </div>
+          <a class="link" href="./recuperarContrasena.html">Olvidé mi contraseña</a>
+        </div>
 
-  </form>
-</section>
+        <p id="mensajeFormulario" class="form-msg" aria-live="polite"></p>
 
-<!-- Panel derecho -->
-<aside class="brand">
-  <div class="brand-inner">
+        <div class="actions">
+          <button class="btn" id="btnIniciarSesion" type="submit">Iniciar sesión</button>
+          <a class="register" href="./registroUsuarios.html">Regístrate</a>
+        </div>
+      </form>
+    </section>
 
-        <!-- Panel derecho -->
+    <!-- Panel derecho -->
     <aside class="brand">
       <div class="brand-inner">
-
         <div class="mark">
           <img src="./img/Upiicsa.png" alt="Logo UPIICSA" class="logo">
         </div>
-
       </div>
     </aside>
 
-  </div>
-</aside>
-```
-
   </main>
+
+  <script type="module" src="./JS/inicioSesion.js"></script>
 </body>
 </html>
