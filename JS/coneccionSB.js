@@ -1,9 +1,13 @@
 // JS/coneccionSB.js
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SUPABASE_URL = "https://acxfppvfzjihgkvvljoq.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_8rTJbNVD_MdzSDZj6nS7ig_bDFK6s2a";
+const URL_SUPABASE = "https://acxfppvfzjihgkvvljoq.supabase.co";
+const CLAVE_PUBLICA_SUPABASE = "sb_publishable_8rTJbNVD_MdzSDZj6nS7ig_bDFK6s2a";
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+export const supabase = createClient(URL_SUPABASE, CLAVE_PUBLICA_SUPABASE, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  }
 });

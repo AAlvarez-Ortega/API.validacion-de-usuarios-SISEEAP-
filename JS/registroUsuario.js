@@ -2,18 +2,19 @@ import { supabase } from "./coneccionSB.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const formulario = document.getElementById("formRegistro");
-  const btnRegistrar = document.getElementById("btnRegistrar");
+  const botonRegistrar = document.getElementById("btnRegistrar");
   const mensajeFormulario = document.getElementById("mensajeFormulario");
 
   const modal = crearModal();
   document.body.appendChild(modal.overlay);
 
   const setMensaje = (texto, tipo = "") => {
+    if (!mensajeFormulario) return;
     mensajeFormulario.textContent = texto;
     mensajeFormulario.className = "form-msg " + tipo;
   };
 
-  function mostrarModal({ titulo, mensaje, tipo = "ok" }) {
+  const mostrarModal = ({ titulo, mensaje, tipo = "ok" }) => {
     modal.titulo.textContent = titulo;
     modal.mensaje.textContent = mensaje;
 
@@ -22,11 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     modal.overlay.classList.add("open");
     modal.btnCerrar.focus();
-  }
+  };
 
-  function cerrarModal() {
-    modal.overlay.classList.remove("open");
-  }
+  const cerrarModal = () => modal.overlay.classList.remove("open");
 
   modal.btnCerrar.addEventListener("click", cerrarModal);
   modal.overlay.addEventListener("click", (e) => {
@@ -42,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const nombre = document.getElementById("nombre").value.trim();
     const apellidoPaterno = document.getElementById("apellidoPaterno").value.trim();
     const apellidoMaterno = document.getElementById("apellidoMaterno").value.trim();
-    const fechaNacimiento = document.getElementById("fechaNacimiento").value;
+    const fechaNacimiento = document.getElementById("fechaNacimiento").value; // YYYY-MM-DD
     const telefono = document.getElementById("telefono").value.trim();
     const correo = document.getElementById("correo").value.trim();
     const contrasena = document.getElementById("contrasena").value;
@@ -66,12 +65,22 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    btnRegistrar.disabled = true;
-    btnRegistrar.textContent = "Creando cuenta…";
+    // (Opcional) validación básica de teléfono (solo dígitos)
+    if (!/^\d{10,15}$/.test(telefono)) {
+      mostrarModal({
+        titulo: "Registro fallido",
+        mensaje: "El teléfono debe contener solo números (10 a 15 dígitos).",
+        tipo: "error"
+      });
+      return;
+    }
+
+    botonRegistrar.disabled = true;
+    const textoOriginal = botonRegistrar.textContent;
+    botonRegistrar.textContent = "Creando cuenta…";
     setMensaje("Creando cuenta…", "");
 
-    // ✅ Redirect robusto para GitHub Pages
-    // Devuelve a la carpeta donde está el HTML actual
+    // ✅ Redirect robusto para GitHub Pages (te regresa a la carpeta del sitio)
     const urlBase = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "/");
     const redireccionCorreo = urlBase;
 
@@ -81,6 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
         password: contrasena,
         options: {
           emailRedirectTo: redireccionCorreo,
+          // ✅ metadata en español (esto lo usa tu trigger para insertar en public.perfiles)
           data: {
             nombre,
             apellidoPaterno,
@@ -92,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (error) {
+        // Ej: "User already registered"
         mostrarModal({
           titulo: "Registro fallido",
           mensaje: error.message || "No se pudo registrar ❌",
@@ -101,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Con confirmación por correo, session puede ser null
+      // Con confirmación de correo, session suele venir null
       if (data?.session) {
         mostrarModal({
           titulo: "Registro exitoso ✅",
@@ -118,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       setMensaje("Registro completado ✅", "ok");
       formulario.reset();
+
     } catch (err) {
       console.error(err);
       mostrarModal({
@@ -127,8 +139,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       setMensaje("Error inesperado ❌", "error");
     } finally {
-      btnRegistrar.disabled = false;
-      btnRegistrar.textContent = "Crear cuenta";
+      botonRegistrar.disabled = false;
+      botonRegistrar.textContent = textoOriginal;
     }
   });
 });
@@ -150,7 +162,6 @@ function crearModal() {
   const mensaje = overlay.querySelector(".sb-modal-message");
   const btnCerrar = overlay.querySelector(".sb-modal-btn");
 
-  // CSS embebido (solo para modal)
   const estilo = document.createElement("style");
   estilo.textContent = `
     .sb-modal-overlay{
@@ -162,9 +173,7 @@ function crearModal() {
       z-index:9999;
       padding:16px;
     }
-    .sb-modal-overlay.open{
-      opacity:1; pointer-events:auto;
-    }
+    .sb-modal-overlay.open{ opacity:1; pointer-events:auto; }
     .sb-modal{
       width:min(460px, 92vw);
       background: rgba(255,255,255,.92);
@@ -175,9 +184,7 @@ function crearModal() {
       transform: translateY(6px) scale(.98);
       transition: transform .18s ease;
     }
-    .sb-modal-overlay.open .sb-modal{
-      transform: translateY(0) scale(1);
-    }
+    .sb-modal-overlay.open .sb-modal{ transform: translateY(0) scale(1); }
     .sb-modal-title{
       margin:0 0 10px;
       font-size:18px;
