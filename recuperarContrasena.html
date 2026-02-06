@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recuperar contraseña - UPIICSA</title>
+
+  <link rel="stylesheet" href="./css/inicioSesion-registro/index.css">
+  <link rel="stylesheet" href="./css/inicioSesion-registro/logo.css">
+</head>
+
+<body>
+  <main class="wrap">
+
+    <!-- Panel izquierdo -->
+    <section class="card" aria-label="Recuperar contraseña">
+
+      <div class="avatar" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"/>
+        </svg>
+      </div>
+
+      <form id="formRecuperarContrasena" novalidate>
+        <div class="field">
+          <label class="label" for="nuevaContrasena">Nueva contraseña</label>
+
+          <div class="input-wrap">
+            <input class="input" id="nuevaContrasena" name="nuevaContrasena" type="password"
+                   autocomplete="new-password" required />
+            <button type="button" class="btn-ojo" id="btnOjoNueva" aria-label="Mostrar contraseña">
+              <svg class="icono-ojo" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-2.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="confirmarContrasena">Confirmar contraseña</label>
+
+          <div class="input-wrap">
+            <input class="input" id="confirmarContrasena" name="confirmarContrasena" type="password"
+                   autocomplete="new-password" required />
+            <button type="button" class="btn-ojo" id="btnOjoConfirmar" aria-label="Mostrar contraseña">
+              <svg class="icono-ojo" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-2.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <p id="mensajeFormulario" class="form-msg" aria-live="polite"></p>
+
+        <div class="actions">
+          <button class="btn" id="btnActualizar" type="submit">Actualizar contraseña</button>
+          <a class="register" href="./index.html">Volver al login</a>
+        </div>
+      </form>
+    </section>
+
+    <!-- Panel derecho -->
+    <aside class="brand">
+      <div class="brand-inner">
+        <div class="mark">
+          <img src="./img/Upiicsa.png" alt="Logo UPIICSA" class="logo">
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <script type="module" src="./JS/cambiarContrasena.js"></script>
+</body>
+</html>
