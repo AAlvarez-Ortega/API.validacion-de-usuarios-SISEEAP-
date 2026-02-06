@@ -1,5 +1,5 @@
 // JS/registroUsuarios.js
-import { supabase } from "./coneccionSB.js";
+import { supabase } from "../coneccionSB.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("✅ registroUsuarios.js cargado");

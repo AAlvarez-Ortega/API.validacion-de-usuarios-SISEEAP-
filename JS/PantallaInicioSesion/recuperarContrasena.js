@@ -1,4 +1,4 @@
-import { supabase } from "./coneccionSB.js";
+import { supabase } from "../coneccionSB.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("✅ recuperarContrasenaModal.js cargado");
