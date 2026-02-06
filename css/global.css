@@ -1,0 +1,330 @@
+/* =====================================================
+   GLOBAL.CSS — CORREGIDO
+   ✔ Desktop sin scroll
+   ✔ Todo cabe en ~80% pantalla (sin cortarse)
+   ✔ Logout abajo
+   ✔ Espaciado controlado con clamp()
+===================================================== */
+
+:root{
+  --verde-1:#08481f;
+  --verde-2:#0c8737;
+
+  --fondo-main:#eef3f1;
+  --panel:#ffffff;
+
+  --text:#1a1a1a;
+  --muted:#6e6e6e;
+
+  --radius-xl:26px;
+  --radius-lg:18px;
+
+  --shadow:0 20px 50px rgba(0,0,0,.12);
+}
+
+*{ box-sizing:border-box; }
+
+html,body{
+  height:100%;
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:linear-gradient(120deg,var(--verde-1),var(--verde-2));
+}
+
+/* ✅ Desktop: NO scroll */
+@media (min-width: 1101px){
+  html,body{ overflow:hidden; }
+}
+
+/* ✅ Centrado real (sin empujar hacia abajo) */
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: clamp(10px, 2vw, 24px);
+}
+
+/* =====================================================
+   APP LAYOUT
+===================================================== */
+
+.app{
+  width: min(1500px, 96vw);
+
+  height: min(95svh, 95vh);
+  max-height: min(95svh, 95vh);
+
+  display:grid;
+  grid-template-columns: 90px 1fr 360px;
+
+  gap: clamp(14px, 1.8vw, 26px);
+  padding: clamp(14px, 1.8vw, 24px);
+
+  overflow:hidden;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar{
+  background:linear-gradient(180deg,#0b7a32,#0a6a2c);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow);
+
+  display:flex;
+  flex-direction:column;
+
+  padding: 16px 0;
+  overflow:hidden;
+}
+
+.sidebar__top{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap: 18px;
+}
+
+.sidebar__logo{ width:56px; }
+
+.sidebar__brandSmall{
+  color:#fff;
+  letter-spacing:.18em;
+  font-size:12px;
+}
+
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap: 16px;
+}
+
+.nav-item{
+  width:54px;
+  height:54px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.08);
+  transition:.2s;
+  border:0;
+  cursor:pointer;
+}
+
+.nav-item img{ width:26px; height:auto; display:block; }
+
+.nav-item:hover{ background:rgba(255,255,255,.18); }
+
+/* ✅ LOGOUT abajo SIEMPRE */
+.logout{
+  margin-top:auto;
+  align-self:center;
+
+  width:54px;
+  height:54px;
+  border-radius:14px;
+
+  background: rgba(255,255,255,.10);
+  display:grid;
+  place-items:center;
+
+  cursor:pointer;
+  transition:.2s;
+}
+.logout img{ width:26px; height:auto; display:block; }
+.logout:hover{ background:rgba(255,255,255,.18); }
+
+/* =====================================================
+   MAIN AREA (solo estructura; dashboard va en dashboard.css)
+===================================================== */
+
+.main{
+  background:var(--fondo-main);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow);
+
+  /* ✅ padding que no rompe */
+  padding: clamp(16px, 1.8vw, 24px);
+
+  /* ✅ evita scroll */
+  overflow:hidden;
+
+  min-width: 0; /* evita overflow horizontal en grid */
+}
+
+.main__header{ margin-bottom: clamp(10px, 1.2vw, 16px); }
+
+.title__app{
+  color:var(--muted);
+  letter-spacing:.18em;
+  font-size:12px;
+}
+
+.title__page{
+  margin:0;
+  font-size: clamp(26px, 2.2vw, 34px);
+}
+
+/* =====================================================
+   RIGHT BAR
+===================================================== */
+
+.rightbar{
+  background:var(--fondo-main);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow);
+
+  padding: clamp(14px, 1.6vw, 22px);
+  overflow:hidden;
+
+  min-width: 0;
+}
+
+/* ===== USER CARD ===== */
+
+.userCard{
+  background:#fff;
+  border-radius:var(--radius-lg);
+  padding: clamp(12px, 1.4vw, 18px);
+  margin-bottom: clamp(12px, 1.4vw, 18px);
+}
+
+.userCard__top{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+}
+
+.search{
+  flex:1;
+  background:#f1f1f1;
+  border-radius:999px;
+  padding: 8px 14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width: 0;
+}
+
+.search__input{
+  border:none;
+  outline:none;
+  background:none;
+  width:100%;
+  min-width:0;
+}
+
+.avatarBtn{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:#0b7a32;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  border:0;
+}
+
+.avatarBtn__img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.userCard__info{ margin-top: 12px; }
+
+.userCard__name{
+  font-weight:800;
+  margin:0 0 6px;
+}
+
+.userCard__desc{
+  font-size:13px;
+  color:var(--muted);
+  margin:0;
+}
+
+/* ===== SCHOOLS ===== */
+
+.schools{
+  background:#fff;
+  border-radius:var(--radius-lg);
+  padding: clamp(12px, 1.4vw, 18px);
+  overflow:hidden;
+}
+
+.schools__title{
+  font-weight:800;
+  margin:0 0 10px;
+}
+
+.schools__list{
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+}
+
+.schoolItem{
+  display:flex;
+  gap:12px;
+  align-items:center;
+
+  background:#f4f4f4;
+  border:none;
+  border-radius:14px;
+
+  padding:12px;
+  cursor:pointer;
+}
+
+.schoolItem__logo{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  background:#e8efe9;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  flex: 0 0 auto;
+}
+
+.schoolItem__logo img{
+  width:32px;
+  height:auto;
+  display:block;
+}
+
+.schoolItem__text{ min-width:0; }
+.schoolItem__name{ font-weight:800; }
+.schoolItem__sub{ font-size:12px; color:var(--muted); }
+
+/* hint */
+.schools__hint{
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* =====================================================
+   MOBILE / TABLET — aquí sí dejamos scroll
+===================================================== */
+
+@media (max-width:1100px){
+  html,body{ overflow:auto; }
+  body{ align-items:stretch; }
+
+  .app{
+    height:auto;
+    max-height:none;
+    grid-template-columns:80px 1fr;
+  }
+
+  .rightbar{ display:none; }
+}
+
+@media (max-width:700px){
+  .app{ grid-template-columns:70px 1fr; }
+  .sidebar{ border-radius: 0 22px 22px 0; }
+}

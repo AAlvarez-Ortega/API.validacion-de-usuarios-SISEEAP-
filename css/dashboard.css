@@ -1,0 +1,169 @@
+/* =========================
+   DASHBOARD (CENTRO)
+   Archivo: dashboard.css
+   ✅ Desktop: sin scroll y sin cortar
+   ✅ Mobile/Tablet: con scroll natural
+========================= */
+
+/* MAIN (estructura del centro) */
+.main{
+  /* OJO: en global.css ya tienes bg, radius, shadow y padding.
+     Aquí solo ajustamos comportamiento del dashboard. */
+  height: 100%;
+  min-height: 0;        /* ✅ CLAVE para que el grid permita encoger */
+  overflow: hidden;     /* ✅ Desktop: nada de scroll aquí */
+  position: relative;
+}
+
+/* Header (SISEAP + Dashboard) */
+.main__header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom: clamp(10px, 1.2vw, 16px);
+}
+
+.title__app{
+  font-size: 14px;
+  letter-spacing:.14em;
+  text-transform: uppercase;
+  color: rgba(0,0,0,.45);
+}
+
+.title__page{
+  margin: 2px 0 0;
+  font-size: clamp(30px, 3.1vw, 44px);  /* ✅ responsivo sin desbordar */
+  font-weight: 500;
+  color: rgba(0,0,0,.45);
+}
+
+/* Contenedor dashboard */
+.dashboard{
+  display:flex;
+  flex-direction:column;
+  gap: clamp(12px, 1.4vw, 18px);
+
+  /* ✅ hace que el dashboard “use” el espacio restante del main sin romper */
+  min-height: 0;
+}
+
+/* Panel base */
+.panel{
+  background: var(--panel, #fff);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 18px 40px rgba(0,0,0,.10);
+  border: 1px solid rgba(0,0,0,.05);
+}
+
+/* Hero chart */
+.panel--hero{
+  background: #0b7a32;
+  border: none;
+
+  /* ✅ Altura flexible para que SIEMPRE quepa en 80svh */
+  height: clamp(220px, 34vh, 360px);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.panel__heroContent{
+  width: min(92%, 900px);
+  height: 82%;
+  border-radius: 18px;
+  position: relative;
+}
+
+/* Placeholder chart */
+.heroChart{
+  width:100%;
+  height:100%;
+  border-radius: 18px;
+  position:relative;
+  overflow:hidden;
+}
+
+.heroChart__grid{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(rgba(255,255,255,.25) 1px, transparent 1px) 0 0 / 34px 34px,
+    linear-gradient(90deg, rgba(255,255,255,.25) 1px, transparent 1px) 0 0 / 34px 34px;
+  opacity:.55;
+}
+
+.heroChart__line{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 65% 45%, rgba(255,255,255,.0) 0 55%, rgba(255,255,255,0) 60%),
+    linear-gradient(transparent 0 62%, rgba(255,255,255,.0) 62% 100%);
+}
+
+/* Stats grid */
+.grid2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(12px, 1.4vw, 18px);
+
+  /* ✅ importante para que el grid no crezca infinito */
+  min-height: 0;
+}
+
+/* Tarjetas stats */
+.panel--stat{
+  height: clamp(170px, 22vh, 240px); /* ✅ cabe en pantalla */
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding: clamp(14px, 1.4vw, 20px);
+}
+
+.stat__label{
+  font-size: clamp(26px, 2.4vw, 40px);
+  font-weight: 500;
+  color: rgba(0,0,0,.70);
+  margin-bottom: 6px;
+}
+
+.stat__value{
+  font-size: clamp(58px, 5.2vw, 86px);
+  font-weight: 900;
+  line-height:1;
+  margin: 6px 0 6px;
+}
+
+.stat__hint{
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.stat__logoBox{
+  display:grid;
+  place-items:center;
+}
+
+.stat__logo{
+  width: min(240px, 70%);
+  height:auto;
+  object-fit:contain;
+}
+
+/* =========================
+   RESPONSIVE (Dashboard)
+========================= */
+@media (max-width: 980px){
+  .grid2{ grid-template-columns: 1fr; }
+  .panel--hero{ height: clamp(220px, 32vh, 300px); }
+  .panel--stat{ height: auto; min-height: 190px; }
+}
+
+/* ✅ Mobile/Tablet: permitir scroll natural (porque .app pasa a height:auto en global.css) */
+@media (max-width:1100px){
+  .main{ overflow: visible; }
+}
+    

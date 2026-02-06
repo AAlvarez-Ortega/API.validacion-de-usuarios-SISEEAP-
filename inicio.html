@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inicio - SISEAP</title>
+
+  <!-- CSS GLOBAL (para todas las pantallas internas) -->
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- =========================
+      SIDEBAR IZQUIERDA
+    ========================== -->
+    <aside class="sidebar" aria-label="Navegación principal">
+      <div class="sidebar__top">
+        <a class="sidebar__brand" href="./inicio.html" aria-label="Ir al inicio">
+          <img src="./img/Upiicsa.png" alt="UPIICSA" class="sidebar__logo">
+          <div class="sidebar__brandText">
+            <span class="sidebar__brandSmall">SISEAP</span>
+          </div>
+        </a>
+
+        <nav class="nav">
+
+        <!-- INICIO -->
+        <a href="./inicio.html" class="nav-item" id="navInicio">
+            <img src="./img/Home.png" alt="Inicio">
+        </a>
+
+        <!-- REGISTROS -->
+        <a href="./registro.html" class="nav-item" id="navRegistros">
+            <img src="./img/Lista.png" alt="Registros">
+        </a>
+
+        <!-- USUARIO -->
+        <a href="./usuario.html" class="nav-item" id="navUsuario">
+            <img src="./img/usuario.png" alt="Usuario">
+        </a>
+
+        </nav>
+
+<!-- LOGOUT -->
+<div class="logout" id="btnLogout">
+  <img src="./img/Cerrar sesion.png" alt="Cerrar sesión">
+</div>
+
+    </aside>
+
+    <!-- =========================
+      CONTENIDO CENTRAL
+    ========================== -->
+    <main class="main" aria-label="Contenido principal">
+
+      <header class="main__header">
+        <div class="title">
+          <span class="title__app">SISEAP</span>
+          <h1 class="title__page">Dashboard</h1>
+        </div>
+      </header>
+
+      <section class="dashboard">
+
+        <!-- Tarjeta grande (placeholder de gráfica) -->
+        <article class="panel panel--hero" aria-label="Gráfica principal">
+          <div class="panel__heroContent">
+            <div class="heroChart" aria-hidden="true">
+              <!-- Placeholder: después puedes meter chart.js / svg / etc -->
+              <div class="heroChart__grid"></div>
+              <div class="heroChart__line"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Stats -->
+        <div class="grid2">
+          <article class="panel panel--stat" aria-label="Usuarios registrados">
+            <div class="stat__label">Users</div>
+            <div class="stat__value" id="contadorUsuarios">12000</div>
+            <div class="stat__hint" id="hintUsuarios">Total de usuarios</div>
+          </article>
+
+          <article class="panel panel--stat" aria-label="Identidad institucional">
+            <div class="stat__logoBox">
+              
+            </div>
+          </article>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- =========================
+      PANEL DERECHO
+    ========================== -->
+    <aside class="rightbar" aria-label="Panel de usuario y escuelas">
+
+      <!-- Usuario -->
+      <section class="userCard" aria-label="Usuario">
+        <div class="userCard__top">
+          <div class="search">
+            <span class="search__ico" aria-hidden="true">🔎</span>
+            <input
+              id="buscadorEscuelas"
+              class="search__input"
+              type="text"
+              placeholder="Buscar"
+              autocomplete="off"
+            />
+          </div>
+
+          <button class="avatarBtn" type="button" aria-label="Perfil">
+            <!-- Avatar (listo para Supabase) -->
+            <img
+              id="fotoUsuario"
+              class="avatarBtn__img"
+              src="./img/avatar-placeholder.png"
+              alt="Foto de usuario"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
+            />
+            <div id="avatarFallback" class="avatarFallback" aria-hidden="true" style="display:none;">👤</div>
+          </button>
+        </div>
+
+        <div class="userCard__info">
+          <div class="userCard__name" id="nombreUsuario">UPIICSA</div>
+          <div class="userCard__desc" id="descripcionUsuario">
+            Unidad Profesional Interdisciplinaria de Ingeniería y Ciencias Sociales y Administrativas
+          </div>
+        </div>
+      </section>
+
+      <!-- Lista de escuelas -->
+      <section class="schools" aria-label="Lista de escuelas">
+        <div class="schools__title">Escuelas</div>
+
+        <!-- Lista lista para poblar con Supabase -->
+        <div class="schools__list" id="listaEscuelas">
+          <button class="schoolItem" type="button" data-escuela-id="1">
+            <div class="schoolItem__logo" aria-hidden="true">
+              <img src="./img/Upiicsa.png" alt="" />
+            </div>
+            <div class="schoolItem__text">
+              <div class="schoolItem__name">UPIICSA</div>
+              <div class="schoolItem__sub">IPN</div>
+            </div>
+          </button>
+
+          <button class="schoolItem" type="button" data-escuela-id="2">
+            <div class="schoolItem__logo" aria-hidden="true">🏫</div>
+            <div class="schoolItem__text">
+              <div class="schoolItem__name">Otra Escuela</div>
+              <div class="schoolItem__sub">Pendiente</div>
+            </div>
+          </button>
+        </div>
+
+        <p class="schools__hint">
+          *Después conectamos Supabase para cargar escuelas por usuario.
+        </p>
+      </section>
+
+    </aside>
+
+  </div>
+
+  <!-- (Opcional) script futuro -->
+  <!-- <script type="module" src="./JS/inicio.js"></script> -->
+    <script type="module" src="./JS/cerrarSesion.js"></script>
+
+
+</body>
+</html>
