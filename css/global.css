@@ -7,8 +7,8 @@
 ===================================================== */
 
 :root{
-  --verde-1:#08481f;
-  --verde-2:#0c8737;
+  --verde-1:#063718;
+  --verde-2:#0fa042;
 
   --fondo-main:#eef3f1;
   --panel:#ffffff;
@@ -119,7 +119,7 @@ body{
 
 /* ✅ LOGOUT abajo SIEMPRE */
 .logout{
-  margin-top:auto;
+  margin-top:220px;
   align-self:center;
 
   width:54px;
