@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Solicitudes - SISEAP</title>
+
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
+  <link rel="stylesheet" href="./css/solicitudes.css">
+
+  <style>
+    #btnVerificarRegistro,
+    #btnEliminarPreregistro { display: none; }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" aria-label="Navegación principal">
+      <div class="sidebar__top">
+        <a class="sidebar__brand" href="./inicio.html" aria-label="Ir al inicio">
+          <img src="./img/Upiicsa.png" alt="UPIICSA" class="sidebar__logo">
+          <div class="sidebar__brandText">
+            <span class="sidebar__brandSmall">SISEAP</span>
+          </div>
+        </a>
+
+        <nav class="nav">
+          <a href="./inicio.html" class="nav-item" id="navInicio">
+            <img src="./img/Home.png" alt="Inicio">
+          </a>
+          <a href="./registroUsuarios.html" class="nav-item" id="navRegistros">
+            <img src="./img/Lista.png" alt="Registros">
+          </a>
+          <a href="./usuario.html" class="nav-item" id="navUsuario">
+            <img src="./img/usuario.png" alt="Usuario">
+          </a>
+        </nav>
+
+        <div class="logout" id="btnLogout">
+          <img src="./img/Cerrar sesion.png" alt="Cerrar sesión">
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main" aria-label="Contenido principal">
+
+      <section class="solicitudesPage" aria-label="Solicitudes">
+
+        <header class="solicitudesHeader">
+          <div class="solicitudesHeader__brand">SISEAP</div>
+          <h1 class="solicitudesHeader__title">Solicitudes</h1>
+        </header>
+
+        <div class="solicitudesLayout">
+
+          <!-- LISTA SOLICITUDES -->
+          <aside class="solicitudesListPanel" aria-label="Lista de solicitudes">
+            <div class="solicitudesList" id="listaSolicitudes" role="list">
+              <!-- solicitudes.js -->
+            </div>
+          </aside>
+
+          <!-- DETALLE -->
+          <section class="solicitudesDetail" aria-label="Detalle de solicitud">
+
+            <article class="cardCount" aria-label="Total de solicitudes">
+              <div class="cardCount__label">Solicitudes</div>
+              <div class="cardCount__value" id="totalSolicitudes">0</div>
+            </article>
+
+            <article class="cardDetail" aria-label="Información del alumno">
+              <div class="cardDetail__top">
+                <div class="cardDetail__logo">
+                  <img src="./img/Upiicsa.png" alt="IPN" />
+                </div>
+                <h2 class="cardDetail__name" id="alumnoNombre">Selecciona una solicitud</h2>
+              </div>
+
+              <div class="cardDetail__info">
+                <p><strong>Boleta:</strong> <span id="alumnoBoleta">—</span></p>
+                <p><strong>Correo:</strong> <span id="alumnoCorreo">—</span></p>
+                <p><strong>Sede:</strong> <span id="alumnoSede">—</span></p>
+              </div>
+
+              <div class="cardDetail__actions">
+                <button class="btnPrimary" id="btnVerificarRegistro" type="button">
+                  Verificar Registro
+                </button>
+
+                <button class="btnDanger" id="btnEliminarPreregistro" type="button">
+                  Eliminar Preregistro
+                </button>
+              </div>
+            </article>
+
+          </section>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RIGHTBAR -->
+    <aside class="rightbar" aria-label="Panel de usuario y escuelas">
+
+      <section class="userCard" aria-label="Usuario">
+        <div class="userCard__top">
+          <div class="search">
+            <span class="search__ico" aria-hidden="true">🔎</span>
+            <input
+              id="buscadorEscuelas"
+              class="search__input"
+              type="text"
+              placeholder="Buscar"
+              autocomplete="off"
+            />
+          </div>
+
+          <button class="avatarBtn" type="button" aria-label="Perfil">
+            <!-- ⚠️ Ajuste de ruta: tu placeholder está en /img -->
+            <img
+              id="fotoUsuario"
+              class="avatarBtn__img"
+              src="./img/avatar-placeholder.png"
+              alt="Foto de usuario"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
+            />
+            <div id="avatarFallback" class="avatarFallback" aria-hidden="true" style="display:none;">👤</div>
+          </button>
+        </div>
+
+        <div class="userCard__info">
+          <div class="userCard__name" id="nombreUsuario">IPN</div>
+          <div class="userCard__desc" id="descripcionUsuario">
+            Selecciona una escuela para filtrar solicitudes.
+          </div>
+        </div>
+      </section>
+
+      <section class="schools" aria-label="Lista de escuelas">
+        <div class="schools__title">Escuelas</div>
+
+        <div class="schools__list" id="listaEscuelas">
+          <!-- escuelas.js -->
+        </div>
+
+        <p class="schools__hint">
+          *Escuelas cargadas desde Supabase.
+        </p>
+      </section>
+
+    </aside>
+
+  </div>
+
+  <!-- ✅ RUTAS CORRECTAS SEGÚN TU ESTRUCTURA -->
+  <script type="module" src="./JS/pantallaInicio/cerrarSesion.js"></script>
+  <!-- Luego las pantallas -->
+  <script type="module" src="./JS/escuelas.js"></script>
+  <script type="module" src="./JS/pantallaSolicitudes/solicitudes.js"></script>
+
+</body>
+</html>
