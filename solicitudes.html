@@ -159,11 +159,16 @@
   </div>
 
   <!-- Scripts -->
+   <script type="module">
+  import { requireAuth } from "./JS/authGuard.js";
+  await requireAuth({ loginPage: "./index.html" });
+</script>
+
   <script type="module" src="./JS/pantallaInicio/cerrarSesion.js"></script>
 
   <script type="module" src="./JS/escuelas.js"></script>
   <script type="module" src="./JS/pantallaSolicitudes/solicitudes.js"></script>
-
+ 
   <!-- ✅ Handler del botón "Mostrar todas" (no toca tus JS existentes) -->
   <script type="module">
     const btn = document.getElementById("btnMostrarTodas");
