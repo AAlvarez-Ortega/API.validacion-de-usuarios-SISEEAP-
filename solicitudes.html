@@ -9,10 +9,6 @@
   <link rel="stylesheet" href="./css/dashboard.css">
   <link rel="stylesheet" href="./css/solicitudes.css">
 
-  <style>
-    #btnVerificarRegistro,
-    #btnEliminarPreregistro { display: none; }
-  </style>
 </head>
 
 <body>
@@ -61,7 +57,7 @@
           <!-- LISTA SOLICITUDES -->
           <aside class="solicitudesListPanel" aria-label="Lista de solicitudes">
             <div class="solicitudesList" id="listaSolicitudes" role="list">
-              <!-- solicitudes.js -->
+              <!-- solicitudes.js pinta aquí -->
             </div>
           </aside>
 
@@ -87,15 +83,15 @@
                 <p><strong>Sede:</strong> <span id="alumnoSede">—</span></p>
               </div>
 
-              <div class="cardDetail__actions">
-                <button class="btnPrimary" id="btnVerificarRegistro" type="button">
-                  Verificar Registro
-                </button>
+              <button class="btnPrimary hidden" id="btnVerificarRegistro" type="button">
+                Verificar Registro
+              </button>
 
-                <button class="btnDanger" id="btnEliminarPreregistro" type="button">
-                  Eliminar Preregistro
-                </button>
-              </div>
+              <button class="btnDanger hidden" id="btnEliminarPreregistro" type="button">
+                Eliminar Preregistro
+              </button>
+
+
             </article>
 
           </section>
@@ -122,7 +118,6 @@
           </div>
 
           <button class="avatarBtn" type="button" aria-label="Perfil">
-            <!-- ⚠️ Ajuste de ruta: tu placeholder está en /img -->
             <img
               id="fotoUsuario"
               class="avatarBtn__img"
@@ -139,6 +134,11 @@
           <div class="userCard__desc" id="descripcionUsuario">
             Selecciona una escuela para filtrar solicitudes.
           </div>
+
+          <!-- ✅ BOTÓN MOSTRAR TODAS -->
+          <button class="btnAll" id="btnMostrarTodas" type="button">
+            Mostrar todas las solicitudes
+          </button>
         </div>
       </section>
 
@@ -146,7 +146,7 @@
         <div class="schools__title">Escuelas</div>
 
         <div class="schools__list" id="listaEscuelas">
-          <!-- escuelas.js -->
+          <!-- escuelas.js pinta aquí -->
         </div>
 
         <p class="schools__hint">
@@ -158,11 +158,32 @@
 
   </div>
 
-  <!-- ✅ RUTAS CORRECTAS SEGÚN TU ESTRUCTURA -->
+  <!-- Scripts -->
   <script type="module" src="./JS/pantallaInicio/cerrarSesion.js"></script>
-  <!-- Luego las pantallas -->
+
   <script type="module" src="./JS/escuelas.js"></script>
   <script type="module" src="./JS/pantallaSolicitudes/solicitudes.js"></script>
+
+  <!-- ✅ Handler del botón "Mostrar todas" (no toca tus JS existentes) -->
+  <script type="module">
+    const btn = document.getElementById("btnMostrarTodas");
+    if (btn) {
+      btn.addEventListener("click", () => {
+        // Dispara el mismo evento que usan las escuelas, pero sin filtro
+        window.dispatchEvent(
+          new CustomEvent("escuela:seleccionada", {
+            detail: { escuelaId: null, escuela: null }
+          })
+        );
+
+        // Reset UI del panel derecho
+        const n = document.getElementById("nombreUsuario");
+        const d = document.getElementById("descripcionUsuario");
+        if (n) n.textContent = "IPN";
+        if (d) d.textContent = "Mostrando todas las solicitudes.";
+      });
+    }
+  </script>
 
 </body>
 </html>

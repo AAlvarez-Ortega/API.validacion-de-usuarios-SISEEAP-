@@ -1,21 +1,12 @@
+// ./JS/pantallaSolicitudes/solicitudes.js
 import { supabase } from "../coneccionSB.js";
 
 /**
  * Requiere en el HTML:
- * - Panel lista solicitudes:  #listaSolicitudes (contenedor)
- * - Contador:                #totalSolicitudes
- * - Detalle:
- *    #alumnoNombre
- *    #alumnoBoleta
- *    #alumnoCorreo
- *    #alumnoSede   (aquí ponemos siglas/nombre escuela)
- *
- * - Botones (pueden ser id o clase; aquí uso ID):
- *    #btnVerificarRegistro
- *    #btnEliminarPreregistro
- *
- * Recomendación: que los botones inicien ocultos en CSS:
- *   display:none;
+ *  - #listaSolicitudes
+ *  - #totalSolicitudes
+ *  - #alumnoNombre, #alumnoBoleta, #alumnoCorreo, #alumnoSede
+ *  - #btnVerificarRegistro, #btnEliminarPreregistro
  */
 
 const $lista = document.getElementById("listaSolicitudes");
@@ -45,29 +36,34 @@ function escapeHTML(str = "") {
 function fullName(s) {
   return `${s.nombre ?? ""} ${s.apellido_paterno ?? ""} ${s.apellido_materno ?? ""}`.trim();
 }
-
 function setBotonesVisible(visible) {
-  if ($btnVerificar) $btnVerificar.style.display = visible ? "" : "none";
-  if ($btnEliminar) $btnEliminar.style.display = visible ? "" : "none";
+  console.log("si se esta activando", visible);
+  if ($btnVerificar) $btnVerificar.classList.toggle("hidden", !visible);
+  if ($btnEliminar) $btnEliminar.classList.toggle("hidden", !visible);
+}
+
+
+function resetDetalle() {
+  if ($dNombre) $dNombre.textContent = "Selecciona una solicitud";
+  if ($dBoleta) $dBoleta.textContent = "—";
+  if ($dCorreo) $dCorreo.textContent = "—";
+  if ($dSede) $dSede.textContent = "—";
+  setBotonesVisible(false);
 }
 
 function renderDetalle(s) {
   if (!$dNombre || !$dBoleta || !$dCorreo || !$dSede) return;
 
   const nombreCompleto = fullName(s);
+
   const escuelaSiglas = s.escuelas?.siglas || "—";
   const escuelaNombre = s.escuelas?.nombre || "";
+  const sedeTxt = escuelaNombre ? `${escuelaSiglas} — ${escuelaNombre}` : escuelaSiglas;
 
-  $dNombre.innerHTML = escapeHTML(nombreCompleto).replaceAll(" ", " ");
+  $dNombre.textContent = nombreCompleto || "—";
   $dBoleta.textContent = s.numero_boleta || "—";
   $dCorreo.textContent = s.correo || "—";
-
-  // Sede tipo imagen: "UPIICSA — Nombre completo..."
-  const sedeTxt = escuelaNombre
-    ? `${escuelaSiglas} — ${escuelaNombre}`
-    : `${escuelaSiglas}`;
-
-  $dSede.textContent = sedeTxt;
+  $dSede.textContent = sedeTxt || "—";
 
   setBotonesVisible(true);
 }
@@ -85,7 +81,6 @@ function renderListaSolicitudes(items) {
       const id = escapeHTML(s.id);
       const nombre = escapeHTML(fullName(s));
       const boleta = escapeHTML(s.numero_boleta || "");
-
       const activeClass = solicitudSeleccionada?.id === s.id ? " is-active" : "";
 
       return `
@@ -102,15 +97,12 @@ function renderListaSolicitudes(items) {
     })
     .join("");
 
-  // click seleccionar
   $lista.querySelectorAll(".solicitudItem").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-solicitud-id");
       solicitudSeleccionada = solicitudesCache.find((x) => x.id === id);
 
-      // Re-render para marcar activo
       renderListaSolicitudes(solicitudesCache);
-
       if (solicitudSeleccionada) renderDetalle(solicitudSeleccionada);
     });
   });
@@ -119,13 +111,13 @@ function renderListaSolicitudes(items) {
 export async function cargarSolicitudes({ escuelaId = null } = {}) {
   if (!$lista) return;
 
-  setBotonesVisible(false);
   solicitudSeleccionada = null;
   escuelaFiltroId = escuelaId;
 
+  resetDetalle();
   $lista.innerHTML = `<div style="padding:12px;opacity:.7;">Cargando solicitudes...</div>`;
 
-  // Trae solicitudes + join de escuelas (relación por FK escuela_id -> escuelas.id)
+  // ✅ ORDEN: más antigua -> más nueva
   let query = supabase
     .from("solicitudes")
     .select(
@@ -143,7 +135,7 @@ export async function cargarSolicitudes({ escuelaId = null } = {}) {
       `,
       { count: "exact" }
     )
-    .order("creado_en", { ascending: false });
+    .order("creado_en", { ascending: true });
 
   if (escuelaId) query = query.eq("escuela_id", escuelaId);
 
@@ -158,38 +150,44 @@ export async function cargarSolicitudes({ escuelaId = null } = {}) {
 
   solicitudesCache = data || [];
 
-  // contador
   if ($contador) $contador.textContent = String(count ?? solicitudesCache.length);
 
   renderListaSolicitudes(solicitudesCache);
 
-  // Si hay elementos, auto-selecciona el primero (opcional, como demo)
+  // auto-seleccionar la primera (la más antigua)
   if (solicitudesCache.length) {
     solicitudSeleccionada = solicitudesCache[0];
     renderListaSolicitudes(solicitudesCache);
     renderDetalle(solicitudSeleccionada);
+  } else {
+    resetDetalle();
   }
 }
 
 function setupBotones() {
-  // Botones visibles solo cuando hay selección
-  setBotonesVisible(false);
+  resetDetalle();
 
+  // ✅ Botón verificar (lógica pendiente)
   if ($btnVerificar) {
     $btnVerificar.addEventListener("click", async () => {
       if (!solicitudSeleccionada) return;
 
-      // Aquí tu lógica real (ej: actualizar estado, mover a usuarios, etc.)
-      console.log("Verificar registro:", solicitudSeleccionada);
-      alert(`Verificar registro: ${fullName(solicitudSeleccionada)} (${solicitudSeleccionada.numero_boleta})`);
+      // TODO: aquí después vas a mover/crear usuario, actualizar estado, etc.
+      console.log("Verificar (pendiente):", solicitudSeleccionada);
+
+      alert("✅ Verificar solicitud (pendiente de lógica). Revisa consola.");
     });
   }
 
+  // ✅ Botón eliminar (ya funcional)
   if ($btnEliminar) {
     $btnEliminar.addEventListener("click", async () => {
       if (!solicitudSeleccionada) return;
 
-      const ok = confirm(`¿Seguro que deseas eliminar el preregistro de ${fullName(solicitudSeleccionada)}?`);
+      const nombre = fullName(solicitudSeleccionada);
+      const boleta = solicitudSeleccionada.numero_boleta || "";
+
+      const ok = confirm(`¿Eliminar la solicitud de:\n${nombre}\nBoleta: ${boleta}?`);
       if (!ok) return;
 
       const { error } = await supabase
@@ -198,18 +196,18 @@ function setupBotones() {
         .eq("id", solicitudSeleccionada.id);
 
       if (error) {
-        console.error("Error eliminando:", error);
-        alert("No se pudo eliminar. Revisa consola.");
+        console.error("Error eliminando solicitud:", error);
+        alert("❌ No se pudo eliminar la solicitud. Revisa consola.");
         return;
       }
 
-      // Recargar lista (respeta filtro)
+      // recargar lista manteniendo filtro
       await cargarSolicitudes({ escuelaId: escuelaFiltroId });
     });
   }
 }
 
-// Escucha selección de escuela desde escuelas.js
+// Escucha la escuela seleccionada desde escuelas.js para filtrar
 window.addEventListener("escuela:seleccionada", async (ev) => {
   const escuelaId = ev.detail?.escuelaId || null;
   await cargarSolicitudes({ escuelaId });
@@ -217,5 +215,5 @@ window.addEventListener("escuela:seleccionada", async (ev) => {
 
 document.addEventListener("DOMContentLoaded", async () => {
   setupBotones();
-  await cargarSolicitudes(); // carga todas al inicio
+  await cargarSolicitudes();
 });

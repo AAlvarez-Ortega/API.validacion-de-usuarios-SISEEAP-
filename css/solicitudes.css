@@ -1,5 +1,5 @@
 /* =========================
-  SOLICITUDES (CENTRAL) - estilo como la imagen
+  SOLICITUDES (CENTRAL) - estilo como la imagen (CORREGIDO)
 ========================= */
 
 .solicitudesPage{
@@ -71,7 +71,7 @@
 }
 
 .solicitudItem.is-active{
-  background: #d8c6c6; /* similar al seleccionado de la imagen */
+  background: #d8c6c6; /* seleccionado */
 }
 
 .solicitudItem__logo{
@@ -134,6 +134,9 @@
   border-radius: 22px;
   padding: 20px 22px;
   box-shadow: 0 10px 25px rgba(0,0,0,.08);
+
+  /* ✅ evita cortes raros */
+  overflow: visible;
 }
 
 .cardDetail__top{
@@ -181,16 +184,25 @@
   display: grid;
   gap: 10px;
   margin-top: 14px;
+
+  /* ✅ clave para evitar colapso visual del grid */
+  grid-auto-rows: min-content;
 }
 
+/* Botones */
 .btnPrimary,
 .btnDanger{
   border: none;
+  margin-top: 20px;;
   border-radius: 999px;
   padding: 12px 14px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 10px 18px rgba(0,0,0,.10);
+
+  /* ✅ para que sí ocupen espacio/altura */
+  display: block;
+  width: 100%;
 }
 
 .btnPrimary{
@@ -202,6 +214,26 @@
   background: #ff9fa2;
   color: #ffffff;
 }
+
+/* Botón Mostrar todas */
+.btnAll{
+  border: none;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  background: #0b7a46;
+  color: #fff;
+  box-shadow: 0 10px 18px rgba(0,0,0,.10);
+  margin-top: 10px;
+
+  display: block;
+}
+.btnAll:active{ transform: translateY(1px); }
+
+/* ✅ Control de ocultar/mostrar desde JS */
+.hidden{ display: none !important; }
 
 /* Responsive */
 @media (max-width: 980px){
