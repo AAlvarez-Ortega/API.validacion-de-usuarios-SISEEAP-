@@ -7,6 +7,8 @@ import { supabase } from "../coneccionSB.js";
  *  - #totalSolicitudes
  *  - #alumnoNombre, #alumnoBoleta, #alumnoCorreo, #alumnoSede
  *  - #btnVerificarRegistro, #btnEliminarPreregistro
+ *  - #buscadorSolicitudes (nuevo)
+ *  - #btnClearSolicitudes (opcional)
  */
 
 const $lista = document.getElementById("listaSolicitudes");
@@ -20,9 +22,16 @@ const $dSede = document.getElementById("alumnoSede");
 const $btnVerificar = document.getElementById("btnVerificarRegistro");
 const $btnEliminar = document.getElementById("btnEliminarPreregistro");
 
+// 🔎 NUEVO: buscador
+const $buscador = document.getElementById("buscadorSolicitudes");
+const $btnClear = document.getElementById("btnClearSolicitudes");
+
 let solicitudesCache = [];
 let solicitudSeleccionada = null;
 let escuelaFiltroId = null;
+
+// 🔎 NUEVO: estado del filtro
+let filtroBoleta = "";
 
 function escapeHTML(str = "") {
   return str
@@ -36,12 +45,11 @@ function escapeHTML(str = "") {
 function fullName(s) {
   return `${s.nombre ?? ""} ${s.apellido_paterno ?? ""} ${s.apellido_materno ?? ""}`.trim();
 }
+
 function setBotonesVisible(visible) {
-  console.log("si se esta activando", visible);
   if ($btnVerificar) $btnVerificar.classList.toggle("hidden", !visible);
   if ($btnEliminar) $btnEliminar.classList.toggle("hidden", !visible);
 }
-
 
 function resetDetalle() {
   if ($dNombre) $dNombre.textContent = "Selecciona una solicitud";
@@ -66,6 +74,49 @@ function renderDetalle(s) {
   $dSede.textContent = sedeTxt || "—";
 
   setBotonesVisible(true);
+}
+
+/* 🔎 NUEVO: aplica filtro por boleta sobre el cache */
+function getSolicitudesFiltradas() {
+  const q = (filtroBoleta || "").trim();
+  if (!q) return solicitudesCache;
+
+  // solo dígitos por si pegan espacios/guiones
+  const qDigits = q.replace(/[^\d]/g, "");
+  if (!qDigits) return solicitudesCache;
+
+  return solicitudesCache.filter((s) =>
+    String(s.numero_boleta ?? "").includes(qDigits)
+  );
+}
+
+/* 🔎 NUEVO: render "principal" que respeta el filtro */
+function renderUI() {
+  const filtradas = getSolicitudesFiltradas();
+
+  // contador: muestra cuántas se ven (y guarda total en title)
+  if ($contador) {
+    $contador.textContent = String(filtradas.length);
+    $contador.title = `Mostrando ${filtradas.length} de ${solicitudesCache.length}`;
+  }
+
+  renderListaSolicitudes(filtradas);
+
+  // Si la seleccionada ya no existe en el filtro, resetea detalle
+  if (solicitudSeleccionada) {
+    const sigueVisible = filtradas.some((x) => x.id === solicitudSeleccionada.id);
+    if (!sigueVisible) {
+      solicitudSeleccionada = null;
+      resetDetalle();
+    } else {
+      // mantiene selección en lista y detalle
+      renderDetalle(solicitudSeleccionada);
+    }
+  } else {
+    // si no hay selección, no auto-seleccionamos al filtrar (más UX)
+    // pero si está vacío el filtro y hay data, puedes auto seleccionar la primera:
+    // (lo dejamos igual que antes solo cuando carga)
+  }
 }
 
 function renderListaSolicitudes(items) {
@@ -100,10 +151,11 @@ function renderListaSolicitudes(items) {
   $lista.querySelectorAll(".solicitudItem").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-solicitud-id");
+      // Ojo: la selección siempre debe venir del cache completo
       solicitudSeleccionada = solicitudesCache.find((x) => x.id === id);
 
-      renderListaSolicitudes(solicitudesCache);
-      if (solicitudSeleccionada) renderDetalle(solicitudSeleccionada);
+      // re-render respetando filtro y marcando active
+      renderUI();
     });
   });
 }
@@ -139,7 +191,7 @@ export async function cargarSolicitudes({ escuelaId = null } = {}) {
 
   if (escuelaId) query = query.eq("escuela_id", escuelaId);
 
-  const { data, error, count } = await query;
+  const { data, error } = await query;
 
   if (error) {
     console.error("Error cargando solicitudes:", error);
@@ -150,16 +202,15 @@ export async function cargarSolicitudes({ escuelaId = null } = {}) {
 
   solicitudesCache = data || [];
 
-  if ($contador) $contador.textContent = String(count ?? solicitudesCache.length);
+  // Render inicial respetando filtro actual
+  renderUI();
 
-  renderListaSolicitudes(solicitudesCache);
-
-  // auto-seleccionar la primera (la más antigua)
-  if (solicitudesCache.length) {
-    solicitudSeleccionada = solicitudesCache[0];
-    renderListaSolicitudes(solicitudesCache);
-    renderDetalle(solicitudSeleccionada);
-  } else {
+  // auto-seleccionar la primera (solo al cargar SIN filtro de boleta)
+  const filtradas = getSolicitudesFiltradas();
+  if (!filtroBoleta && filtradas.length) {
+    solicitudSeleccionada = filtradas[0];
+    renderUI();
+  } else if (!filtradas.length) {
     resetDetalle();
   }
 }
@@ -172,9 +223,7 @@ function setupBotones() {
     $btnVerificar.addEventListener("click", async () => {
       if (!solicitudSeleccionada) return;
 
-      // TODO: aquí después vas a mover/crear usuario, actualizar estado, etc.
       console.log("Verificar (pendiente):", solicitudSeleccionada);
-
       alert("✅ Verificar solicitud (pendiente de lógica). Revisa consola.");
     });
   }
@@ -201,8 +250,33 @@ function setupBotones() {
         return;
       }
 
-      // recargar lista manteniendo filtro
+      // recargar lista manteniendo filtro de escuela (y manteniendo el texto en buscador)
       await cargarSolicitudes({ escuelaId: escuelaFiltroId });
+    });
+  }
+}
+
+/* 🔎 NUEVO: setup del buscador por boleta */
+function setupBuscador() {
+  if (!$buscador) return;
+
+  // limita a números (sin impedir pegar)
+  $buscador.addEventListener("input", () => {
+    // guarda y normaliza
+    filtroBoleta = $buscador.value;
+
+    // opcional: limpiar caracteres no numéricos visualmente
+    // $buscador.value = $buscador.value.replace(/[^\d]/g, "");
+
+    renderUI();
+  });
+
+  if ($btnClear) {
+    $btnClear.addEventListener("click", () => {
+      filtroBoleta = "";
+      $buscador.value = "";
+      renderUI();
+      $buscador.focus();
     });
   }
 }
@@ -215,5 +289,6 @@ window.addEventListener("escuela:seleccionada", async (ev) => {
 
 document.addEventListener("DOMContentLoaded", async () => {
   setupBotones();
+  setupBuscador();
   await cargarSolicitudes();
 });
