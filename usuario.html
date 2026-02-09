@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Usuario - SISEAP</title>
+
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/tarjetaUsuario.css">
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" aria-label="Navegación principal">
+      <div class="sidebar__top">
+        <a class="sidebar__brand" href="./inicio.html" aria-label="Ir al inicio">
+          <img src="./img/Upiicsa.png" alt="UPIICSA" class="sidebar__logo">
+          <div class="sidebar__brandText">
+            <span class="sidebar__brandSmall">SISEAP</span>
+          </div>
+        </a>
+
+        <nav class="nav">
+          <a href="./inicio.html" class="nav-item" id="navInicio">
+            <img src="./img/Home.png" alt="Inicio">
+          </a>
+          <a href="./solicitudes.html" class="nav-item" id="navRegistros">
+            <img src="./img/Lista.png" alt="Registros">
+          </a>
+          <a href="./usuario.html" class="nav-item" id="navUsuario">
+            <img src="./img/usuario.png" alt="Usuario">
+          </a>
+        </nav>
+
+        <div class="logout" id="btnLogout">
+          <img src="./img/Cerrar sesion.png" alt="Cerrar sesión">
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main" aria-label="Contenido principal">
+
+      <section class="usuarioPage" aria-label="Perfil de usuario">
+
+        <header class="usuarioHeader">
+          <div class="usuarioHeader__brand">SISEAP</div>
+          <h1 class="usuarioHeader__title">Mi perfil</h1>
+          <p class="usuarioHeader__subtitle">Información de la sesión activa.</p>
+        </header>
+
+        <!-- TARJETA -->
+        <article class="userCardMain" aria-label="Tarjeta de usuario">
+          <div class="userCardMain__layout">
+
+            <!-- ✅ COLUMNA IZQUIERDA: DATOS -->
+            <div class="userCardMain__left">
+
+              <div class="userCardMain__top">
+                <div class="userAvatar" aria-hidden="true">
+                  <img id="uFoto" class="userAvatar__img" src="./img/avatar-placeholder.png" alt="" />
+                  <div id="uAvatarFallback" class="userAvatar__fallback" style="display:none;">👤</div>
+                </div>
+
+                <div class="userHead">
+                  <div class="userHead__name" id="uNombre">Cargando...</div>
+                  <div class="userHead__email" id="uEmail">—</div>
+                  <div class="userHead__badge" id="uRol">Sesión activa</div>
+                </div>
+              </div>
+
+              <div class="userCardMain__grid">
+                <div class="infoItem">
+                  <div class="infoItem__label">Nombre</div>
+                  <div class="infoItem__value" id="uNombreCompleto">—</div>
+                </div>
+
+                <div class="infoItem">
+                  <div class="infoItem__label">Correo</div>
+                  <div class="infoItem__value" id="uCorreo">—</div>
+                </div>
+
+                <div class="infoItem">
+                  <div class="infoItem__label">Teléfono</div>
+                  <div class="infoItem__value" id="uTelefono">—</div>
+                </div>
+
+                <div class="infoItem">
+                  <div class="infoItem__label">Fecha de nacimiento</div>
+                  <div class="infoItem__value" id="uNacimiento">—</div>
+                </div>
+              </div>
+
+              <div class="userCardMain__actions">
+                <button class="btnSoft" id="btnCopiarEmail" type="button">
+                  Copiar correo
+                </button>
+
+                <button class="btnPrimaryMain" id="btnEditarPerfil" type="button">
+                  Editar perfil
+                </button>
+              </div>
+
+              <p class="userCardMain__hint" id="uEstado">—</p>
+
+            </div>
+
+            <!-- ✅ COLUMNA DERECHA: FORMULARIO DE EDICIÓN (SIN MODAL) -->
+            <aside class="editPanel hidden" id="editPanel" aria-label="Editar perfil">
+
+              <div class="editPanel__header">
+                <div class="editPanel__title">Editar perfil</div>
+                <button class="editPanel__close" id="btnCerrarPanel" type="button" aria-label="Cerrar">✕</button>
+              </div>
+
+              <div class="editPanel__body">
+                <label class="editField">
+                  Nombre
+                  <input id="editNombre" type="text" placeholder="Tu nombre">
+                </label>
+
+                <label class="editField">
+                  Fecha de nacimiento
+                  <input id="editNacimiento" type="date">
+                </label>
+
+                <label class="editField">
+                  Teléfono
+                  <input id="editTelefono" type="text" placeholder="55xxxxxxxx">
+                </label>
+              </div>
+
+              <div class="editPanel__footer">
+                <button class="btnSoft" id="cancelarPerfil" type="button">Cancelar</button>
+                <button class="btnPrimaryMain" id="guardarPerfil" type="button">Guardar cambios</button>
+              </div>
+
+              <p class="editPanel__hint" id="editEstado">—</p>
+            </aside>
+
+          </div>
+        </article>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ✅ Auth Guard -->
+  <script type="module">
+    import { requireAuth } from "./JS/authGuard.js";
+    await requireAuth({ loginPage: "./index.html" });
+  </script>
+
+  <!-- Logout -->
+  <script type="module" src="./JS/pantallaInicio/cerrarSesion.js"></script>
+
+  <!-- ✅ Script de esta vista -->
+  <script type="module" src="./JS/pantallaUsuario/usuario.js"></script>
+
+</body>
+</html>
