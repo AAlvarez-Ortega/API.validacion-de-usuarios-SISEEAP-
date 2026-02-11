@@ -69,7 +69,8 @@ function renderDetalle(s) {
   const sedeTxt = escuelaNombre ? `${escuelaSiglas} — ${escuelaNombre}` : escuelaSiglas;
 
   $dNombre.textContent = nombreCompleto || "—";
-  $dBoleta.textContent = s.numero_boleta || "—";
+  // ✅ CAMBIO: ahora se llama boleta_o_empleado
+  $dBoleta.textContent = s.boleta_o_empleado || "—";
   $dCorreo.textContent = s.correo || "—";
   $dSede.textContent = sedeTxt || "—";
 
@@ -85,8 +86,9 @@ function getSolicitudesFiltradas() {
   const qDigits = q.replace(/[^\d]/g, "");
   if (!qDigits) return solicitudesCache;
 
+  // ✅ CAMBIO: filtrar por boleta_o_empleado
   return solicitudesCache.filter((s) =>
-    String(s.numero_boleta ?? "").includes(qDigits)
+    String(s.boleta_o_empleado ?? "").includes(qDigits)
   );
 }
 
@@ -112,10 +114,6 @@ function renderUI() {
       // mantiene selección en lista y detalle
       renderDetalle(solicitudSeleccionada);
     }
-  } else {
-    // si no hay selección, no auto-seleccionamos al filtrar (más UX)
-    // pero si está vacío el filtro y hay data, puedes auto seleccionar la primera:
-    // (lo dejamos igual que antes solo cuando carga)
   }
 }
 
@@ -131,7 +129,8 @@ function renderListaSolicitudes(items) {
     .map((s) => {
       const id = escapeHTML(s.id);
       const nombre = escapeHTML(fullName(s));
-      const boleta = escapeHTML(s.numero_boleta || "");
+      // ✅ CAMBIO: mostrar boleta_o_empleado
+      const boleta = escapeHTML(s.boleta_o_empleado || "");
       const activeClass = solicitudSeleccionada?.id === s.id ? " is-active" : "";
 
       return `
@@ -178,7 +177,7 @@ export async function cargarSolicitudes({ escuelaId = null } = {}) {
         nombre,
         apellido_paterno,
         apellido_materno,
-        numero_boleta,
+        boleta_o_empleado,
         correo,
         curp,
         escuela_id,
@@ -234,9 +233,10 @@ function setupBotones() {
       if (!solicitudSeleccionada) return;
 
       const nombre = fullName(solicitudSeleccionada);
-      const boleta = solicitudSeleccionada.numero_boleta || "";
+      // ✅ CAMBIO: boleta_o_empleado
+      const boleta = solicitudSeleccionada.boleta_o_empleado || "";
 
-      const ok = confirm(`¿Eliminar la solicitud de:\n${nombre}\nBoleta: ${boleta}?`);
+      const ok = confirm(`¿Eliminar la solicitud de:\n${nombre}\nBoleta/Empleado: ${boleta}?`);
       if (!ok) return;
 
       const { error } = await supabase
@@ -264,10 +264,6 @@ function setupBuscador() {
   $buscador.addEventListener("input", () => {
     // guarda y normaliza
     filtroBoleta = $buscador.value;
-
-    // opcional: limpiar caracteres no numéricos visualmente
-    // $buscador.value = $buscador.value.replace(/[^\d]/g, "");
-
     renderUI();
   });
 
