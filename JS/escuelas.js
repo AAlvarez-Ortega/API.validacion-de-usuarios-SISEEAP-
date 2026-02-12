@@ -16,14 +16,28 @@ const $nombreUsuario = document.getElementById("nombreUsuario");
 const $descripcionUsuario = document.getElementById("descripcionUsuario");
 
 let escuelasCache = [];
+let escuelaSeleccionadaId = null;
 
 function escapeHTML(str = "") {
-  return str
+  return String(str)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function setHeaderEscuela(escuela) {
+  if (!$nombreUsuario || !$descripcionUsuario) return;
+
+  if (!escuela) {
+    $nombreUsuario.textContent = "IPN";
+    $descripcionUsuario.textContent = "Selecciona una escuela para filtrar solicitudes.";
+    return;
+  }
+
+  $nombreUsuario.textContent = escuela.siglas || "IPN";
+  $descripcionUsuario.textContent = escuela.nombre || "";
 }
 
 function renderEscuelas(items) {
@@ -36,33 +50,36 @@ function renderEscuelas(items) {
 
   $lista.innerHTML = items
     .map((e) => {
-      const siglas = escapeHTML(e.siglas);
-      const nombre = escapeHTML(e.nombre);
-      const id = escapeHTML(e.id);
+      const siglas = escapeHTML(e.siglas || "");
+      const nombre = escapeHTML(e.nombre || "");
+      const id = escapeHTML(e.id || "");
+
+      const activeClass = escuelaSeleccionadaId === e.id ? " is-active" : "";
 
       return `
-        <button class="schoolItem" type="button" data-escuela-id="${id}">
+        <button class="schoolItem${activeClass}" type="button" data-escuela-id="${id}">
           <div class="schoolItem__logo" aria-hidden="true">
             <img src="./img/Upiicsa.png" alt="" />
           </div>
           <div class="schoolItem__text">
-            <div class="schoolItem__name">${siglas}</div>
-            <div class="schoolItem__sub">IPN</div>
+            <div class="schoolItem__name">${siglas || "—"}</div>
+            <div class="schoolItem__sub">${nombre ? "IPN" : ""}</div>
           </div>
         </button>
       `;
     })
     .join("");
 
-  // Click en escuela -> disparar evento global para filtrar solicitudes (opcional)
+  // Click en escuela -> disparar evento global para filtrar solicitudes
   $lista.querySelectorAll(".schoolItem").forEach((btn) => {
     btn.addEventListener("click", () => {
       const escuelaId = btn.getAttribute("data-escuela-id");
       const escuela = escuelasCache.find((x) => x.id === escuelaId);
 
+      escuelaSeleccionadaId = escuelaId;
+
       // UI arriba (tarjeta usuario/escuela)
-      if (escuela && $nombreUsuario) $nombreUsuario.textContent = escuela.siglas;
-      if (escuela && $descripcionUsuario) $descripcionUsuario.textContent = escuela.nombre;
+      setHeaderEscuela(escuela);
 
       // Evento para que solicitudes.js filtre
       window.dispatchEvent(
@@ -70,7 +87,22 @@ function renderEscuelas(items) {
           detail: { escuelaId, escuela },
         })
       );
+
+      // re-render para marcar activo
+      renderEscuelas(getEscuelasFiltradas());
     });
+  });
+}
+
+function getEscuelasFiltradas() {
+  const q = ($buscador?.value || "").trim().toLowerCase();
+  if (!q) return escuelasCache;
+
+  return escuelasCache.filter((e) => {
+    return (
+      (e.siglas || "").toLowerCase().includes(q) ||
+      (e.nombre || "").toLowerCase().includes(q)
+    );
   });
 }
 
@@ -78,17 +110,7 @@ function setupSearch() {
   if (!$buscador) return;
 
   $buscador.addEventListener("input", () => {
-    const q = ($buscador.value || "").trim().toLowerCase();
-    if (!q) return renderEscuelas(escuelasCache);
-
-    const filtradas = escuelasCache.filter((e) => {
-      return (
-        (e.siglas || "").toLowerCase().includes(q) ||
-        (e.nombre || "").toLowerCase().includes(q)
-      );
-    });
-
-    renderEscuelas(filtradas);
+    renderEscuelas(getEscuelasFiltradas());
   });
 }
 
@@ -99,7 +121,7 @@ export async function cargarEscuelas() {
 
   const { data, error } = await supabase
     .from("escuelas")
-    .select("id,nombre,siglas")
+    .select("id,nombre,siglas,cct") // ✅ incluye cct por si lo necesitas en detalle/eventos
     .order("siglas", { ascending: true });
 
   if (error) {
@@ -109,7 +131,11 @@ export async function cargarEscuelas() {
   }
 
   escuelasCache = data || [];
-  renderEscuelas(escuelasCache);
+
+  // ✅ Header por defecto
+  setHeaderEscuela(null);
+
+  renderEscuelas(getEscuelasFiltradas());
 }
 
 document.addEventListener("DOMContentLoaded", async () => {

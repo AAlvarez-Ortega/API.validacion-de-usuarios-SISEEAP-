@@ -1,5 +1,7 @@
 // ./JS/pantallaSolicitudes/solicitudes.js
 import { supabase } from "../coneccionSB.js";
+import { verificarRegistro } from "../pantallaSolicitudes/verificarRegistro.js";
+
 
 /**
  * Requiere en el HTML:
@@ -22,7 +24,6 @@ const $dSede = document.getElementById("alumnoSede");
 const $btnVerificar = document.getElementById("btnVerificarRegistro");
 const $btnEliminar = document.getElementById("btnEliminarPreregistro");
 
-// 🔎 NUEVO: buscador
 const $buscador = document.getElementById("buscadorSolicitudes");
 const $btnClear = document.getElementById("btnClearSolicitudes");
 
@@ -30,7 +31,7 @@ let solicitudesCache = [];
 let solicitudSeleccionada = null;
 let escuelaFiltroId = null;
 
-// 🔎 NUEVO: estado del filtro
+
 let filtroBoleta = "";
 
 function escapeHTML(str = "") {
@@ -172,20 +173,21 @@ export async function cargarSolicitudes({ escuelaId = null } = {}) {
   let query = supabase
     .from("solicitudes")
     .select(
-      `
-        id,
-        nombre,
-        apellido_paterno,
-        apellido_materno,
-        boleta_o_empleado,
-        correo,
-        curp,
-        escuela_id,
-        creado_en,
-        escuelas ( id, nombre, siglas )
-      `,
-      { count: "exact" }
-    )
+            `
+              id,
+              nombre,
+              apellido_paterno,
+              apellido_materno,
+              boleta_o_empleado,
+              correo,
+              curp,
+              escuela_id,
+              creado_en,
+              escuelas ( id, nombre, siglas, cct )
+            `,
+            { count: "exact" }
+          )
+
     .order("creado_en", { ascending: true });
 
   if (escuelaId) query = query.eq("escuela_id", escuelaId);
@@ -218,14 +220,51 @@ function setupBotones() {
   resetDetalle();
 
   // ✅ Botón verificar (lógica pendiente)
-  if ($btnVerificar) {
-    $btnVerificar.addEventListener("click", async () => {
-      if (!solicitudSeleccionada) return;
+if ($btnVerificar) {
+  $btnVerificar.addEventListener("click", async () => {
+    if (!solicitudSeleccionada) return;
 
-      console.log("Verificar (pendiente):", solicitudSeleccionada);
-      alert("✅ Verificar solicitud (pendiente de lógica). Revisa consola.");
-    });
-  }
+    try {
+      $btnVerificar.disabled = true;
+      const oldText = $btnVerificar.textContent;
+      $btnVerificar.textContent = "Verificando...";
+
+      const res = await verificarRegistro(solicitudSeleccionada);
+
+      if (!res.ok) {
+        const map = {
+          NO_EXISTE_PADRON: "❌ No existe en el padrón (App_Solicitudes).",
+          DATOS_NO_COINCIDEN: "❌ Los datos no coinciden con el padrón.",
+          AUTH_ERROR: `❌ Error creando usuario: ${res.error || "desconocido"}`,
+          EMAIL_YA_EXISTE: "⚠️ El correo ya está registrado en Auth.",
+        };
+        alert(map[res.reason] || "❌ No se pudo verificar.");
+        return;
+      }
+
+      alert(
+        `✅ Registro verificado.\n\n` +
+        `Se creó el usuario en Auth (App-SISAEP).\n` +
+        `Correo: ${res.email}\n` +
+        `Contraseña temporal: ${res.password}\n\n` +
+        `Se enviará correo de confirmación con las credenciales.`
+      );
+
+      // ✅ opcional: aquí podrías marcar la solicitud como "verificada" en SISAP
+      // (si tienes una columna estado/verificado)
+
+      $btnVerificar.textContent = oldText;
+    } catch (e) {
+      console.error(e);
+      alert(`❌ ${e.message || "Error verificando"}`);
+    } finally {
+      $btnVerificar.disabled = false;
+      $btnVerificar.textContent = "Verificar Registro";
+    }
+  });
+}
+
+
 
   // ✅ Botón eliminar (ya funcional)
   if ($btnEliminar) {
@@ -233,7 +272,7 @@ function setupBotones() {
       if (!solicitudSeleccionada) return;
 
       const nombre = fullName(solicitudSeleccionada);
-      // ✅ CAMBIO: boleta_o_empleado
+    
       const boleta = solicitudSeleccionada.boleta_o_empleado || "";
 
       const ok = confirm(`¿Eliminar la solicitud de:\n${nombre}\nBoleta/Empleado: ${boleta}?`);
