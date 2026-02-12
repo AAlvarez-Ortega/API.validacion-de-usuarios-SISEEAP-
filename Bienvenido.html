@@ -13,24 +13,30 @@
 
 
 
- <script type="module">
+<script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const supabase = createClient(
   "https://wdgsvdjojwjebjrpgopn.supabase.co",
-  "sb_publishable_TxHT2AsKDXlxYRGh0VgRMw_5VozTQ_p"
+  "sb_publishable_TxHT2AsKDXlxYRGh0VgRMw_5VozTQ_p",
+  {
+    auth: {
+      detectSessionInUrl: true,
+      persistSession: true,
+    }
+  }
 );
 
-// Espera a que Supabase procese el token del email
+// ✅ Procesa el token del hash del URL
 await supabase.auth.getSession();
 
 const { data } = await supabase.auth.getUser();
 
 if (!data.user) {
-  // Si alguien entra manual sin confirmar
   window.location.href = "./index.html";
 }
 </script>
+
 
 </body>
 </html>
