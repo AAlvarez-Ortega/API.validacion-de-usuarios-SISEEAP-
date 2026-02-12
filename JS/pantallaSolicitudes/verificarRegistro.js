@@ -1,10 +1,12 @@
 // ./JS/pantallaSolicitudes/verificarRegistro.js
 import { supabaseApp } from "../coneccionSB_App.js"; // ✅ App-SISAEP (validación + Auth)
 
+/** Normaliza para comparar texto */
 function norm(s = "") {
   return String(s).trim().toUpperCase();
 }
 
+/** Genera contraseña aleatoria */
 function genPassword(length = 12) {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*-_";
   let out = "";
@@ -12,92 +14,157 @@ function genPassword(length = 12) {
   return out;
 }
 
+/** Determina tipo usuario por longitud (10 alumno, 8/9 profesor) */
+function getTipoUsuario(boletaOEmpleado) {
+  const digits = String(boletaOEmpleado || "").replace(/[^\d]/g, "");
+  if (digits.length === 10) return "alumno";
+  if (digits.length === 8 || digits.length === 9) return "profesor";
+  return "desconocido";
+}
+
+/** Valida igualdad estricta de datos */
 function datosCoinciden(solicitud, padron) {
   return (
-    norm(solicitud.nombre) === norm(padron.nombre) &&
-    norm(solicitud.apellido_paterno) === norm(padron.apellido_paterno) &&
-    norm(solicitud.apellido_materno) === norm(padron.apellido_materno) &&
-    norm(solicitud.curp) === norm(padron.curp) &&
-    norm(solicitud.correo) === norm(padron.correo) &&
-    String(solicitud.boleta_o_empleado || "").trim() === String(padron.boleta_o_empleado || "").trim()
+    norm(solicitud?.nombre) === norm(padron?.nombre) &&
+    norm(solicitud?.apellido_paterno) === norm(padron?.apellido_paterno) &&
+    norm(solicitud?.apellido_materno) === norm(padron?.apellido_materno) &&
+    norm(solicitud?.curp) === norm(padron?.curp) &&
+    norm(solicitud?.correo) === norm(padron?.correo) &&
+    String(solicitud?.boleta_o_empleado || "").trim() ===
+      String(padron?.boleta_o_empleado || "").trim()
   );
 }
 
 /**
  * solicitud viene desde SISAP.solicitudes con join escuelas(cct)
+ * Requisito del select en SISAP:
+ *   escuelas ( cct )
  */
 export async function verificarRegistro(solicitud) {
-  const cct = solicitud?.escuelas?.cct;
-  const boletaOEmpleado = String(solicitud?.boleta_o_empleado || "").trim();
-  const email = String(solicitud?.correo || "").trim().toLowerCase();
+  try {
+    const cct = solicitud?.escuelas?.cct || solicitud?.escuela_cct || null;
+    const boletaOEmpleado = String(solicitud?.boleta_o_empleado || "").trim();
+    const email = String(solicitud?.correo || "").trim().toLowerCase();
 
-  if (!cct) return { ok: false, reason: "AUTH_ERROR", error: "Falta CCT en la solicitud (incluye escuelas.cct en el select)." };
-  if (!boletaOEmpleado) return { ok: false, reason: "AUTH_ERROR", error: "Falta boleta_o_empleado en la solicitud." };
-  if (!email) return { ok: false, reason: "AUTH_ERROR", error: "Falta correo en la solicitud." };
+    if (!cct)
+      return {
+        ok: false,
+        reason: "AUTH_ERROR",
+        error: "Falta CCT en la solicitud (incluye escuelas.cct en el select).",
+      };
 
-  // 1) Buscar en padrón (App-SISAEP.App_Solicitudes)
-  const { data: padron, error: padronErr } = await supabaseApp
-    .from("App_Solicitudes")
-    .select("id, nombre, apellido_paterno, apellido_materno, boleta_o_empleado, correo, curp, escuela_cct")
-    .eq("boleta_o_empleado", boletaOEmpleado)
-    .eq("escuela_cct", cct)
-    .limit(1)
-    .maybeSingle();
+    if (!boletaOEmpleado)
+      return { ok: false, reason: "AUTH_ERROR", error: "Falta boleta_o_empleado en la solicitud." };
 
-  if (padronErr) {
-    console.error(padronErr);
-    return { ok: false, reason: "AUTH_ERROR", error: "Error consultando App_Solicitudes." };
-  }
+    if (!email)
+      return { ok: false, reason: "AUTH_ERROR", error: "Falta correo en la solicitud." };
 
-  if (!padron) return { ok: false, reason: "NO_EXISTE_PADRON" };
-
-  // 2) Comparar datos
-  if (!datosCoinciden(solicitud, padron)) {
-    return { ok: false, reason: "DATOS_NO_COINCIDEN" };
-  }
-
-  // 3) Crear usuario en Auth (App-SISAEP)
-  const password = genPassword(12);
-
-   const redirectUrl =
-    "https://aalvarez-ortega.github.io/API.validacion-de-usuarios-SISEEAP-/Bienvenido.html";
-
-  const { data: signUpData, error: signUpErr } = await supabaseApp.auth.signUp({
-    email,
-    password,
-    options: {
-      // ✅ AQUÍ VA EL REDIRECT CORRECTO (1 SOLO)
-      emailRedirectTo: redirectUrl,
-
-      // ✅ Esto viaja a la plantilla del correo (Email Template)
-      data: {
-        temp_password: password,
-        mensaje: "Credenciales de acceso. Sugerencia: se recomienda cambiar contraseña.",
-        nombre: solicitud.nombre,
-        apellido_paterno: solicitud.apellido_paterno,
-        apellido_materno: solicitud.apellido_materno,
-        boleta_o_empleado: boletaOEmpleado,
-        curp: solicitud.curp,
-        escuela_cct: cct,
-      },
-    },
-  });
-
-
-  if (signUpErr) {
-    console.error(signUpErr);
-
-    // típico: "User already registered"
-    if ((signUpErr.message || "").toLowerCase().includes("already")) {
-      return { ok: false, reason: "EMAIL_YA_EXISTE" };
+    const tipoUsuario = getTipoUsuario(boletaOEmpleado);
+    if (tipoUsuario === "desconocido") {
+      return {
+        ok: false,
+        reason: "AUTH_ERROR",
+        error: "boleta_o_empleado debe tener 10 dígitos (alumno) o 8/9 dígitos (profesor).",
+      };
     }
-    return { ok: false, reason: "AUTH_ERROR", error: signUpErr.message };
-  }
 
-  return {
-    ok: true,
-    email,
-    password,
-    userId: signUpData?.user?.id || null
-  };
+    // 1) Buscar en padrón (App-SISAEP.App_Solicitudes)
+    const { data: padron, error: padronErr } = await supabaseApp
+      .from("App_Solicitudes")
+      .select("id, nombre, apellido_paterno, apellido_materno, boleta_o_empleado, correo, curp, escuela_cct")
+      .eq("boleta_o_empleado", boletaOEmpleado)
+      .eq("escuela_cct", cct)
+      .limit(1)
+      .maybeSingle();
+
+    if (padronErr) {
+      console.error("Error consultando App_Solicitudes:", padronErr);
+      return { ok: false, reason: "AUTH_ERROR", error: "Error consultando App_Solicitudes." };
+    }
+
+    if (!padron) return { ok: false, reason: "NO_EXISTE_PADRON" };
+
+    // 2) Comparar datos exactos
+    if (!datosCoinciden(solicitud, padron)) {
+      return { ok: false, reason: "DATOS_NO_COINCIDEN" };
+    }
+
+    // 3) Crear usuario en Auth (App-SISAEP)
+    const password = genPassword(12);
+
+    // ✅ Debe ser EXACTAMENTE la URL que existe en GitHub Pages (sensible a mayúsculas/minúsculas)
+    const redirectUrl =
+      "https://aalvarez-ortega.github.io/API.validacion-de-usuarios-SISEEAP-/Bienvenido.html";
+
+    const { data: signUpData, error: signUpErr } = await supabaseApp.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl, // ✅ 1 SOLO redirect
+        data: {
+          temp_password: password,
+          mensaje: "Credenciales de acceso. Sugerencia: se recomienda cambiar contraseña.",
+          nombre: solicitud.nombre,
+          apellido_paterno: solicitud.apellido_paterno,
+          apellido_materno: solicitud.apellido_materno,
+          boleta_o_empleado: boletaOEmpleado,
+          curp: solicitud.curp,
+          escuela_cct: cct,
+          tipo_usuario: tipoUsuario,
+        },
+      },
+    });
+
+    if (signUpErr) {
+      console.error("Error signUp:", signUpErr);
+      const msg = (signUpErr.message || "").toLowerCase();
+      if (msg.includes("already")) return { ok: false, reason: "EMAIL_YA_EXISTE" };
+      return { ok: false, reason: "AUTH_ERROR", error: signUpErr.message };
+    }
+
+    const authUid = signUpData?.user?.id || null;
+    if (!authUid) {
+      return { ok: false, reason: "AUTH_ERROR", error: "Supabase no devolvió el UID del usuario." };
+    }
+
+    // 4) ✅ Insertar en public.usuarios usando el UID como PK
+    //    (Aunque tengas trigger, este upsert asegura el 1:1 y no truena si ya existe)
+    const payloadUsuario = {
+      id: authUid, // ✅ CLAVE: ID = auth.uid
+      nombre: solicitud.nombre,
+      apellido_paterno: solicitud.apellido_paterno,
+      apellido_materno: solicitud.apellido_materno,
+      boleta_o_empleado: boletaOEmpleado,
+      correo: email,
+      curp: solicitud.curp,
+      tipo_usuario: tipoUsuario,
+      escuela_cct: cct,
+    };
+
+    const { error: upsertErr } = await supabaseApp
+      .from("usuarios")
+      .upsert(payloadUsuario, { onConflict: "id" });
+
+    if (upsertErr) {
+      console.error("Error upsert usuarios:", upsertErr);
+      return {
+        ok: false,
+        reason: "DB_ERROR",
+        error:
+          "El usuario se creó en Auth, pero falló el registro en tabla usuarios (revisa RLS/policies).",
+      };
+    }
+
+    return {
+      ok: true,
+      email,
+      password,
+      userId: authUid,
+      tipo_usuario: tipoUsuario,
+      escuela_cct: cct,
+    };
+  } catch (e) {
+    console.error("verificarRegistro() catch:", e);
+    return { ok: false, reason: "AUTH_ERROR", error: e?.message || "Error desconocido." };
+  }
 }
