@@ -9,5 +9,28 @@
 <body>
  <h1>Bienvenido a SISEAP</h1>
  <p>Tu sesión ha sido validada correctamente.</p>
+
+
+
+
+ <script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const supabase = createClient(
+  "https://wdgsvdjojwjebjrpgopn.supabase.co",
+  "sb_publishable_TxHT2AsKDXlxYRGh0VgRMw_5VozTQ_p"
+);
+
+// Espera a que Supabase procese el token del email
+await supabase.auth.getSession();
+
+const { data } = await supabase.auth.getUser();
+
+if (!data.user) {
+  // Si alguien entra manual sin confirmar
+  window.location.href = "./index.html";
+}
+</script>
+
 </body>
 </html>
