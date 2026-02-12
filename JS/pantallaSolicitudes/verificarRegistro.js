@@ -59,10 +59,16 @@ export async function verificarRegistro(solicitud) {
   // 3) Crear usuario en Auth (App-SISAEP)
   const password = genPassword(12);
 
+   const redirectUrl =
+    "https://aalvarez-ortega.github.io/API.validacion-de-usuarios-SISEEAP-/Bienvenido.html";
+
   const { data: signUpData, error: signUpErr } = await supabaseApp.auth.signUp({
     email,
     password,
     options: {
+      // ✅ AQUÍ VA EL REDIRECT CORRECTO (1 SOLO)
+      emailRedirectTo: redirectUrl,
+
       // ✅ Esto viaja a la plantilla del correo (Email Template)
       data: {
         temp_password: password,
@@ -72,10 +78,11 @@ export async function verificarRegistro(solicitud) {
         apellido_materno: solicitud.apellido_materno,
         boleta_o_empleado: boletaOEmpleado,
         curp: solicitud.curp,
-        escuela_cct: cct
-      }
-    }
+        escuela_cct: cct,
+      },
+    },
   });
+
 
   if (signUpErr) {
     console.error(signUpErr);
