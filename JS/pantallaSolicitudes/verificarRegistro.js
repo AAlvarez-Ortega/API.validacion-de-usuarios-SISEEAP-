@@ -8,7 +8,8 @@ function norm(s = "") {
 
 /** Genera contraseña aleatoria */
 function genPassword(length = 12) {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*-_";
+  const chars =
+    "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*-_";
   let out = "";
   for (let i = 0; i < length; i++) out += chars[Math.floor(Math.random() * chars.length)];
   return out;
@@ -36,9 +37,25 @@ function datosCoinciden(solicitud, padron) {
 }
 
 /**
+ * Crea el link “manual” por si Gmail bloquea el botón (copy/paste).
+ * OJO: el token real solo lo genera Supabase dentro del email; aquí damos el patrón.
+ */
+function getFallbackLinkMessage() {
+  return (
+    "Si el botón no funciona, copia y pega el enlace de confirmación que viene debajo del botón en el correo. " +
+    "Es un link de este estilo:\n" +
+    "https://TU-PROYECTO.supabase.co/auth/v1/verify?token=...&type=signup&redirect_to=..."
+  );
+}
+
+/**
  * solicitud viene desde SISAP.solicitudes con join escuelas(cct)
  * Requisito del select en SISAP:
  *   escuelas ( cct )
+ *
+ * ✅ IMPORTANTE:
+ * - Ya NO insertamos en public.usuarios desde aquí.
+ * - El registro en public.usuarios se hará cuando confirmen el correo (trigger en auth.users).
  */
 export async function verificarRegistro(solicitud) {
   try {
@@ -46,18 +63,29 @@ export async function verificarRegistro(solicitud) {
     const boletaOEmpleado = String(solicitud?.boleta_o_empleado || "").trim();
     const email = String(solicitud?.correo || "").trim().toLowerCase();
 
-    if (!cct)
+    if (!cct) {
       return {
         ok: false,
         reason: "AUTH_ERROR",
         error: "Falta CCT en la solicitud (incluye escuelas.cct en el select).",
       };
+    }
 
-    if (!boletaOEmpleado)
-      return { ok: false, reason: "AUTH_ERROR", error: "Falta boleta_o_empleado en la solicitud." };
+    if (!boletaOEmpleado) {
+      return {
+        ok: false,
+        reason: "AUTH_ERROR",
+        error: "Falta boleta_o_empleado en la solicitud.",
+      };
+    }
 
-    if (!email)
-      return { ok: false, reason: "AUTH_ERROR", error: "Falta correo en la solicitud." };
+    if (!email) {
+      return {
+        ok: false,
+        reason: "AUTH_ERROR",
+        error: "Falta correo en la solicitud.",
+      };
+    }
 
     const tipoUsuario = getTipoUsuario(boletaOEmpleado);
     if (tipoUsuario === "desconocido") {
@@ -71,7 +99,9 @@ export async function verificarRegistro(solicitud) {
     // 1) Buscar en padrón (App-SISAEP.App_Solicitudes)
     const { data: padron, error: padronErr } = await supabaseApp
       .from("App_Solicitudes")
-      .select("id, nombre, apellido_paterno, apellido_materno, boleta_o_empleado, correo, curp, escuela_cct")
+      .select(
+        "id, nombre, apellido_paterno, apellido_materno, boleta_o_empleado, correo, curp, escuela_cct"
+      )
       .eq("boleta_o_empleado", boletaOEmpleado)
       .eq("escuela_cct", cct)
       .limit(1)
@@ -79,7 +109,11 @@ export async function verificarRegistro(solicitud) {
 
     if (padronErr) {
       console.error("Error consultando App_Solicitudes:", padronErr);
-      return { ok: false, reason: "AUTH_ERROR", error: "Error consultando App_Solicitudes." };
+      return {
+        ok: false,
+        reason: "AUTH_ERROR",
+        error: "Error consultando App_Solicitudes.",
+      };
     }
 
     if (!padron) return { ok: false, reason: "NO_EXISTE_PADRON" };
@@ -118,42 +152,24 @@ export async function verificarRegistro(solicitud) {
     if (signUpErr) {
       console.error("Error signUp:", signUpErr);
       const msg = (signUpErr.message || "").toLowerCase();
+
       if (msg.includes("already")) return { ok: false, reason: "EMAIL_YA_EXISTE" };
+
       return { ok: false, reason: "AUTH_ERROR", error: signUpErr.message };
     }
 
     const authUid = signUpData?.user?.id || null;
     if (!authUid) {
-      return { ok: false, reason: "AUTH_ERROR", error: "Supabase no devolvió el UID del usuario." };
-    }
-
-    // 4) ✅ Insertar en public.usuarios usando el UID como PK
-    //    (Aunque tengas trigger, este upsert asegura el 1:1 y no truena si ya existe)
-    const payloadUsuario = {
-      id: authUid, // ✅ CLAVE: ID = auth.uid
-      nombre: solicitud.nombre,
-      apellido_paterno: solicitud.apellido_paterno,
-      apellido_materno: solicitud.apellido_materno,
-      boleta_o_empleado: boletaOEmpleado,
-      correo: email,
-      curp: solicitud.curp,
-      tipo_usuario: tipoUsuario,
-      escuela_cct: cct,
-    };
-
-    const { error: upsertErr } = await supabaseApp
-      .from("usuarios")
-      .upsert(payloadUsuario, { onConflict: "id" });
-
-    if (upsertErr) {
-      console.error("Error upsert usuarios:", upsertErr);
       return {
         ok: false,
-        reason: "DB_ERROR",
-        error:
-          "El usuario se creó en Auth, pero falló el registro en tabla usuarios (revisa RLS/policies).",
+        reason: "AUTH_ERROR",
+        error: "Supabase no devolvió el UID del usuario.",
       };
     }
+
+    // ✅ OJO:
+    // No insertamos en public.usuarios aquí.
+    // Tu trigger "after update on auth.users" (cuando email_confirmed_at cambia) se encarga.
 
     return {
       ok: true,
@@ -162,9 +178,16 @@ export async function verificarRegistro(solicitud) {
       userId: authUid,
       tipo_usuario: tipoUsuario,
       escuela_cct: cct,
+      redirectUrl,
+      fallbackLinkHint: getFallbackLinkMessage(),
     };
   } catch (e) {
     console.error("verificarRegistro() catch:", e);
-    return { ok: false, reason: "AUTH_ERROR", error: e?.message || "Error desconocido." };
+    return {
+      ok: false,
+      reason: "AUTH_ERROR",
+      error: e?.message || "Error desconocido.",
+    };
   }
 }
+

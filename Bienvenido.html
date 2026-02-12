@@ -3,15 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>validacion</title>
+  <title>Validación - SISEAP</title>
+  <link rel="stylesheet" href="./css/bienvenidos.css">
 </head>
 
 <body>
- <h1>Bienvenido a SISEAP</h1>
- <p>Tu sesión ha sido validada correctamente.</p>
+
+  <div class="card">
+    <div class="check-circle">
+      <svg viewBox="0 0 24 24">
+        <path d="M5 13l4 4L19 7"/>
+      </svg>
+    </div>
+
+    <h1>Bienvenido a SISAAP</h1>
+    <p>Tu cuenta ha sido validada correctamente.<br>
+       Ya puedes iniciar sesión en la plataforma.</p>
 
 
-
+    <div class="footer">
+      Sistema Institucional de Seguimiento Educativo
+    </div>
+  </div>
 
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
@@ -27,9 +40,7 @@ const supabase = createClient(
   }
 );
 
-// ✅ Procesa el token del hash del URL
 await supabase.auth.getSession();
-
 const { data } = await supabase.auth.getUser();
 
 if (!data.user) {

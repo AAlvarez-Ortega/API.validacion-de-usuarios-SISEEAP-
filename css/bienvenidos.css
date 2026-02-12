@@ -1,0 +1,103 @@
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0f7c3f, #1faa59, #0d5c2b);
+      overflow: hidden;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 50px 40px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      animation: fadeIn 0.8s ease-out;
+      position: relative;
+    }
+
+    .check-circle {
+      width: 90px;
+      height: 90px;
+      background: #0f7c3f;
+      border-radius: 50%;
+      margin: 0 auto 25px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pop 0.5s ease-out;
+    }
+
+    .check-circle svg {
+      width: 45px;
+      height: 45px;
+      stroke: white;
+      stroke-width: 3;
+      fill: none;
+      stroke-dasharray: 100;
+      stroke-dashoffset: 100;
+      animation: draw 0.6s ease forwards 0.4s;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0f7c3f;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 16px;
+      color: #444;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      border-radius: 30px;
+      background: #0f7c3f;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(15, 124, 63, 0.4);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(15, 124, 63, 0.6);
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 13px;
+      color: #777;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes draw {
+      to { stroke-dashoffset: 0; }
+    }
