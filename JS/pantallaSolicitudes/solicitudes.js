@@ -1,8 +1,8 @@
-// ./JS/pantallaSolicitudes/solicitudes.js
-import { supabase } from "./coneccionSB.js";
-import { verificarRegistro } from "./pantallaSolicitudes/verificarRegistro.js";
 
-/**
+import { supabase } from "..//coneccionSB.js";
+import { verificarRegistro } from "../pantallaSolicitudes/verificarRegistro.js";
+
+/**s
  * Requiere en el HTML:
  *  - #listaSolicitudes
  *  - #totalSolicitudes

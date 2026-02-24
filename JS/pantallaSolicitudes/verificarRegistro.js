@@ -1,5 +1,6 @@
 // ./JS/pantallaSolicitudes/verificarRegistro.js
-import { supabaseApp } from "../coneccionSB_App.js"; // ✅ App-SISAEP (validación + Auth)
+import { supabaseApp } from "../coneccionSB_App.js"; // App-SISAEP (validación + Auth)
+import { supabase } from "../coneccionSB.js"; // ✅ SISAP (donde vive solicitudes)
 
 /** Normaliza para comparar texto */
 function norm(s = "") {
@@ -11,7 +12,8 @@ function genPassword(length = 12) {
   const chars =
     "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*-_";
   let out = "";
-  for (let i = 0; i < length; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  for (let i = 0; i < length; i++)
+    out += chars[Math.floor(Math.random() * chars.length)];
   return out;
 }
 
@@ -36,10 +38,6 @@ function datosCoinciden(solicitud, padron) {
   );
 }
 
-/**
- * Crea el link “manual” por si Gmail bloquea el botón (copy/paste).
- * OJO: el token real solo lo genera Supabase dentro del email; aquí damos el patrón.
- */
 function getFallbackLinkMessage() {
   return (
     "Si el botón no funciona, copia y pega el enlace de confirmación que viene debajo del botón en el correo. " +
@@ -48,42 +46,21 @@ function getFallbackLinkMessage() {
   );
 }
 
-/**
- * solicitud viene desde SISAP.solicitudes con join escuelas(cct)
- * Requisito del select en SISAP:
- *   escuelas ( cct )
- *
- * ✅ IMPORTANTE:
- * - Ya NO insertamos en public.usuarios desde aquí.
- * - El registro en public.usuarios se hará cuando confirmen el correo (trigger en auth.users).
- */
 export async function verificarRegistro(solicitud) {
   try {
     const cct = solicitud?.escuelas?.cct || solicitud?.escuela_cct || null;
-    const boletaOEmpleado = String(solicitud?.boleta_o_empleado || "").trim();
-    const email = String(solicitud?.correo || "").trim().toLowerCase();
+    const boletaOEmpleado = String(
+      solicitud?.boleta_o_empleado || ""
+    ).trim();
+    const email = String(solicitud?.correo || "")
+      .trim()
+      .toLowerCase();
 
-    if (!cct) {
+    if (!cct || !boletaOEmpleado || !email) {
       return {
         ok: false,
         reason: "AUTH_ERROR",
-        error: "Falta CCT en la solicitud (incluye escuelas.cct en el select).",
-      };
-    }
-
-    if (!boletaOEmpleado) {
-      return {
-        ok: false,
-        reason: "AUTH_ERROR",
-        error: "Falta boleta_o_empleado en la solicitud.",
-      };
-    }
-
-    if (!email) {
-      return {
-        ok: false,
-        reason: "AUTH_ERROR",
-        error: "Falta correo en la solicitud.",
+        error: "Datos incompletos en la solicitud.",
       };
     }
 
@@ -92,11 +69,12 @@ export async function verificarRegistro(solicitud) {
       return {
         ok: false,
         reason: "AUTH_ERROR",
-        error: "boleta_o_empleado debe tener 10 dígitos (alumno) o 8/9 dígitos (profesor).",
+        error:
+          "boleta_o_empleado debe tener 10 dígitos (alumno) o 8/9 dígitos (profesor).",
       };
     }
 
-    // 1) Buscar en padrón (App-SISAEP.App_Solicitudes)
+    // 1️⃣ Buscar en padrón
     const { data: padron, error: padronErr } = await supabaseApp
       .from("App_Solicitudes")
       .select(
@@ -109,53 +87,47 @@ export async function verificarRegistro(solicitud) {
 
     if (padronErr) {
       console.error("Error consultando App_Solicitudes:", padronErr);
-      return {
-        ok: false,
-        reason: "AUTH_ERROR",
-        error: "Error consultando App_Solicitudes.",
-      };
+      return { ok: false, reason: "AUTH_ERROR" };
     }
 
     if (!padron) return { ok: false, reason: "NO_EXISTE_PADRON" };
 
-    // 2) Comparar datos exactos
     if (!datosCoinciden(solicitud, padron)) {
       return { ok: false, reason: "DATOS_NO_COINCIDEN" };
     }
 
-    // 3) Crear usuario en Auth (App-SISAEP)
+    // 2️⃣ Crear usuario en Auth
     const password = genPassword(12);
 
-    // ✅ Debe ser EXACTAMENTE la URL que existe en GitHub Pages (sensible a mayúsculas/minúsculas)
     const redirectUrl =
       "https://aalvarez-ortega.github.io/API.validacion-de-usuarios-SISEEAP-/Bienvenido.html";
 
-    const { data: signUpData, error: signUpErr } = await supabaseApp.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl, // ✅ 1 SOLO redirect
-        data: {
-          temp_password: password,
-          mensaje: "Credenciales de acceso. Sugerencia: se recomienda cambiar contraseña.",
-          nombre: solicitud.nombre,
-          apellido_paterno: solicitud.apellido_paterno,
-          apellido_materno: solicitud.apellido_materno,
-          boleta_o_empleado: boletaOEmpleado,
-          curp: solicitud.curp,
-          escuela_cct: cct,
-          tipo_usuario: tipoUsuario,
+    const { data: signUpData, error: signUpErr } =
+      await supabaseApp.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            temp_password: password,
+            nombre: solicitud.nombre,
+            apellido_paterno: solicitud.apellido_paterno,
+            apellido_materno: solicitud.apellido_materno,
+            boleta_o_empleado: boletaOEmpleado,
+            curp: solicitud.curp,
+            escuela_cct: cct,
+            tipo_usuario: tipoUsuario,
+          },
         },
-      },
-    });
+      });
 
     if (signUpErr) {
       console.error("Error signUp:", signUpErr);
       const msg = (signUpErr.message || "").toLowerCase();
+      if (msg.includes("already"))
+        return { ok: false, reason: "EMAIL_YA_EXISTE" };
 
-      if (msg.includes("already")) return { ok: false, reason: "EMAIL_YA_EXISTE" };
-
-      return { ok: false, reason: "AUTH_ERROR", error: signUpErr.message };
+      return { ok: false, reason: "AUTH_ERROR" };
     }
 
     const authUid = signUpData?.user?.id || null;
@@ -163,13 +135,24 @@ export async function verificarRegistro(solicitud) {
       return {
         ok: false,
         reason: "AUTH_ERROR",
-        error: "Supabase no devolvió el UID del usuario.",
+        error: "No se recibió UID.",
       };
     }
 
-    // ✅ OJO:
-    // No insertamos en public.usuarios aquí.
-    // Tu trigger "after update on auth.users" (cuando email_confirmed_at cambia) se encarga.
+    // ✅ 3️⃣ ACTUALIZAR ESTADO A "Aceptado" EN SISAP
+    const { error: updateErr } = await supabase
+      .from("solicitudes")
+      .update({ estado: "Aceptado" })
+      .eq("id", solicitud.id);
+
+    if (updateErr) {
+      console.error("Error actualizando estado:", updateErr);
+      return {
+        ok: false,
+        reason: "AUTH_ERROR",
+        error: "Usuario creado pero no se pudo actualizar estado.",
+      };
+    }
 
     return {
       ok: true,
@@ -190,4 +173,3 @@ export async function verificarRegistro(solicitud) {
     };
   }
 }
-
