@@ -1,18 +1,14 @@
-
-import { supabase } from "..//coneccionSB.js";
+import { supabase } from "../coneccionSB.js";
 import { verificarRegistro } from "../pantallaSolicitudes/verificarRegistro.js";
 
-/**s
+/**
  * Requiere en el HTML:
  *  - #listaSolicitudes
  *  - #totalSolicitudes
- *  - #alumnoNombre, #alumnoBoleta, #alumnoCorreo, #alumnoSede, #alumnoEstado (nuevo)
+ *  - #alumnoNombre, #alumnoBoleta, #alumnoCorreo, #alumnoSede, #alumnoEstado
  *  - #btnVerificarRegistro, #btnEliminarPreregistro
- *  - #buscadorSolicitudes
- *  - #btnClearSolicitudes (opcional)
- *  - #btnMostrarTodas (ya existe)
- *  - #btnVerAceptados (nuevo)
- *  - #btnVerRechazados (nuevo)
+ *  - #buscadorSolicitudes, #btnClearSolicitudes
+ *  - #btnMostrarTodas, #btnVerAceptados, #btnVerRechazados
  */
 
 const $lista = document.getElementById("listaSolicitudes");
@@ -22,7 +18,7 @@ const $dNombre = document.getElementById("alumnoNombre");
 const $dBoleta = document.getElementById("alumnoBoleta");
 const $dCorreo = document.getElementById("alumnoCorreo");
 const $dSede = document.getElementById("alumnoSede");
-const $dEstado = document.getElementById("alumnoEstado"); // ✅ NUEVO
+const $dEstado = document.getElementById("alumnoEstado");
 
 const $btnVerificar = document.getElementById("btnVerificarRegistro");
 const $btnEliminar = document.getElementById("btnEliminarPreregistro");
@@ -30,7 +26,7 @@ const $btnEliminar = document.getElementById("btnEliminarPreregistro");
 const $buscador = document.getElementById("buscadorSolicitudes");
 const $btnClear = document.getElementById("btnClearSolicitudes");
 
-// ✅ Botones de filtro por estado
+// Botones de filtro por estado
 const $btnTodas = document.getElementById("btnMostrarTodas");
 const $btnAceptados = document.getElementById("btnVerAceptados");
 const $btnRechazados = document.getElementById("btnVerRechazados");
@@ -40,7 +36,7 @@ let solicitudSeleccionada = null;
 let escuelaFiltroId = null;
 
 let filtroBoleta = "";
-let estadoFiltro = "Pendiente"; // ✅ por defecto
+let estadoFiltro = "Pendiente"; // por defecto
 
 function escapeHTML(str = "") {
   return String(str)
@@ -51,13 +47,22 @@ function escapeHTML(str = "") {
     .replaceAll("'", "&#039;");
 }
 
-function fullName(s) {
-  return `${s.nombre ?? ""} ${s.apellido_paterno ?? ""} ${s.apellido_materno ?? ""}`.trim();
+function normalizeEstado(e) {
+  const x = String(e || "").trim().toLowerCase();
+  if (x === "aceptado") return "Aceptado";
+  if (x === "rechazado") return "Rechazado";
+  return "Pendiente";
 }
 
-function setBotonesVisible(visible) {
-  if ($btnVerificar) $btnVerificar.classList.toggle("hidden", !visible);
-  if ($btnEliminar) $btnEliminar.classList.toggle("hidden", !visible);
+function badgeClass(estado) {
+  const e = normalizeEstado(estado);
+  if (e === "Aceptado") return "badge-estado badge-estado--aceptado";
+  if (e === "Rechazado") return "badge-estado badge-estado--rechazado";
+  return "badge-estado badge-estado--pendiente";
+}
+
+function fullName(s) {
+  return `${s.nombre ?? ""} ${s.apellido_paterno ?? ""} ${s.apellido_materno ?? ""}`.trim();
 }
 
 function resetDetalle() {
@@ -65,8 +70,22 @@ function resetDetalle() {
   if ($dBoleta) $dBoleta.textContent = "—";
   if ($dCorreo) $dCorreo.textContent = "—";
   if ($dSede) $dSede.textContent = "—";
-  if ($dEstado) $dEstado.textContent = "—"; // ✅ NUEVO
-  setBotonesVisible(false);
+  if ($dEstado) {
+    $dEstado.textContent = "—";
+    $dEstado.className = "badge-estado";
+  }
+  if ($btnVerificar) $btnVerificar.classList.add("hidden");
+  if ($btnEliminar) $btnEliminar.classList.add("hidden");
+}
+
+function setBotonesByEstado(s) {
+  const estado = normalizeEstado(s?.estado);
+
+  // Verificar SOLO si está Pendiente
+  if ($btnVerificar) $btnVerificar.classList.toggle("hidden", estado !== "Pendiente");
+
+  // Botón “Eliminar” (rechazar) visible siempre que haya selección
+  if ($btnEliminar) $btnEliminar.classList.remove("hidden");
 }
 
 function renderDetalle(s) {
@@ -82,28 +101,30 @@ function renderDetalle(s) {
   $dBoleta.textContent = s.boleta_o_empleado || "—";
   $dCorreo.textContent = s.correo || "—";
   $dSede.textContent = sedeTxt || "—";
-  $dEstado.textContent = s.estado || "—"; // ✅ NUEVO
 
-  setBotonesVisible(true);
+  const estado = normalizeEstado(s.estado);
+  $dEstado.textContent = estado;
+  $dEstado.className = badgeClass(estado);
+
+  // ✅ AQUÍ estaba el bug: setBotonesVisible no existe
+  setBotonesByEstado(s);
 }
 
-/* 🔎 aplica filtro por boleta sobre el cache */
+/* aplica filtro por boleta sobre el cache */
 function getSolicitudesFiltradas() {
   const q = (filtroBoleta || "").trim();
   if (!q) return solicitudesCache;
 
-  // solo dígitos por si pegan espacios/guiones
   const qDigits = q.replace(/[^\d]/g, "");
   if (!qDigits) return solicitudesCache;
 
   return solicitudesCache.filter((s) => String(s.boleta_o_empleado ?? "").includes(qDigits));
 }
 
-/* 🔎 render principal */
+/* render principal */
 function renderUI() {
   const filtradas = getSolicitudesFiltradas();
 
-  // contador: muestra cuántas se ven
   if ($contador) {
     $contador.textContent = String(filtradas.length);
     $contador.title = `Mostrando ${filtradas.length} de ${solicitudesCache.length}`;
@@ -111,7 +132,6 @@ function renderUI() {
 
   renderListaSolicitudes(filtradas);
 
-  // Si la seleccionada ya no existe en el filtro, resetea detalle
   if (solicitudSeleccionada) {
     const sigueVisible = filtradas.some((x) => x.id === solicitudSeleccionada.id);
     if (!sigueVisible) {
@@ -136,6 +156,7 @@ function renderListaSolicitudes(items) {
       const id = escapeHTML(s.id);
       const nombre = escapeHTML(fullName(s));
       const boleta = escapeHTML(s.boleta_o_empleado || "");
+      const estadoTxt = escapeHTML(normalizeEstado(s.estado));
       const activeClass = solicitudSeleccionada?.id === s.id ? " is-active" : "";
 
       return `
@@ -144,7 +165,10 @@ function renderListaSolicitudes(items) {
             <img src="./img/Upiicsa.png" alt="" />
           </div>
           <div class="solicitudItem__meta">
-            <div class="solicitudItem__name">${nombre}</div>
+            <div class="solicitudItem__nameRow">
+              <div class="solicitudItem__name">${nombre}</div>
+              <span class="${badgeClass(s.estado)}">${estadoTxt}</span>
+            </div>
             <div class="solicitudItem__sub">${boleta}</div>
           </div>
         </button>
@@ -155,7 +179,7 @@ function renderListaSolicitudes(items) {
   $lista.querySelectorAll(".solicitudItem").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-solicitud-id");
-      solicitudSeleccionada = solicitudesCache.find((x) => x.id === id);
+      solicitudSeleccionada = solicitudesCache.find((x) => x.id === id) || null;
       renderUI();
     });
   });
@@ -170,7 +194,6 @@ export async function cargarSolicitudes({ escuelaId = null } = {}) {
   resetDetalle();
   $lista.innerHTML = `<div style="padding:12px;opacity:.7;">Cargando solicitudes.</div>`;
 
-  // ✅ ORDEN: más antigua -> más nueva
   let query = supabase
     .from("solicitudes")
     .select(
@@ -192,8 +215,6 @@ export async function cargarSolicitudes({ escuelaId = null } = {}) {
     .order("creado_en", { ascending: true });
 
   if (escuelaId) query = query.eq("escuela_id", escuelaId);
-
-  // ✅ FILTRO POR ESTADO (por defecto Pendiente)
   if (estadoFiltro) query = query.eq("estado", estadoFiltro);
 
   const { data, error } = await query;
@@ -206,10 +227,8 @@ export async function cargarSolicitudes({ escuelaId = null } = {}) {
   }
 
   solicitudesCache = data || [];
-
   renderUI();
 
-  // auto-seleccionar la primera (solo al cargar SIN filtro de boleta)
   const filtradas = getSolicitudesFiltradas();
   if (!filtroBoleta && filtradas.length) {
     solicitudSeleccionada = filtradas[0];
@@ -219,18 +238,40 @@ export async function cargarSolicitudes({ escuelaId = null } = {}) {
   }
 }
 
+/** ✅ Actualiza estado en cache + quita de lista si aplica (sin recargar toda la pantalla) */
+function aplicarCambioEstadoLocal(id, nuevoEstado) {
+  const idx = solicitudesCache.findIndex((x) => x.id === id);
+  if (idx >= 0) solicitudesCache[idx] = { ...solicitudesCache[idx], estado: nuevoEstado };
+
+  // Si estamos viendo Pendientes y cambió a Aceptado/Rechazado, debe salir de la lista
+  if (estadoFiltro === "Pendiente") {
+    solicitudesCache = solicitudesCache.filter((x) => x.id !== id);
+    solicitudSeleccionada = null;
+    resetDetalle();
+  } else {
+    // Si estamos en Aceptados/Rechazados, refresca el detalle si sigue seleccionado
+    if (solicitudSeleccionada?.id === id) {
+      solicitudSeleccionada = solicitudesCache.find((x) => x.id === id) || null;
+      if (solicitudSeleccionada) renderDetalle(solicitudSeleccionada);
+    }
+  }
+
+  renderUI();
+}
+
 function setupBotones() {
   resetDetalle();
 
-  // ✅ Botón verificar (lógica pendiente - no la tocamos)
   if ($btnVerificar) {
     $btnVerificar.addEventListener("click", async () => {
       if (!solicitudSeleccionada) return;
 
+      const id = solicitudSeleccionada.id;
+
       try {
         $btnVerificar.disabled = true;
         const oldText = $btnVerificar.textContent;
-        $btnVerificar.textContent = "Verificando.";
+        $btnVerificar.textContent = "Verificando...";
 
         const res = await verificarRegistro(solicitudSeleccionada);
 
@@ -242,6 +283,7 @@ function setupBotones() {
             EMAIL_YA_EXISTE: "⚠️ El correo ya está registrado en Auth.",
           };
           alert(map[res.reason] || "❌ No se pudo verificar.");
+          $btnVerificar.textContent = oldText;
           return;
         }
 
@@ -253,7 +295,9 @@ function setupBotones() {
             `Se enviará correo de confirmación con las credenciales.`
         );
 
-        // ✅ más adelante: aquí marcaremos estado = 'Aceptado' si quieres
+        // ✅ UI instantánea: marcar aceptado y quitar de pendientes sin recargar
+        aplicarCambioEstadoLocal(id, "Aceptado");
+
         $btnVerificar.textContent = oldText;
       } catch (e) {
         console.error(e);
@@ -265,23 +309,21 @@ function setupBotones() {
     });
   }
 
-  // ✅ Botón "Eliminar" => ahora rechaza (NO borra)
   if ($btnEliminar) {
     $btnEliminar.addEventListener("click", async () => {
       if (!solicitudSeleccionada) return;
 
+      const id = solicitudSeleccionada.id;
       const nombre = fullName(solicitudSeleccionada);
       const boleta = solicitudSeleccionada.boleta_o_empleado || "";
 
-      const ok = confirm(
-        `¿Rechazar la solicitud de:\n${nombre}\nBoleta/Empleado: ${boleta}?`
-      );
+      const ok = confirm(`¿Rechazar la solicitud de:\n${nombre}\nBoleta/Empleado: ${boleta}?`);
       if (!ok) return;
 
       const { error } = await supabase
         .from("solicitudes")
         .update({ estado: "Rechazado" })
-        .eq("id", solicitudSeleccionada.id);
+        .eq("id", id);
 
       if (error) {
         console.error("Error rechazando solicitud:", error);
@@ -289,13 +331,12 @@ function setupBotones() {
         return;
       }
 
-      // recargar lista manteniendo filtro de escuela y estado actual
-      await cargarSolicitudes({ escuelaId: escuelaFiltroId });
+      // ✅ UI instantánea: marcar rechazado y quitar de pendientes sin recargar
+      aplicarCambioEstadoLocal(id, "Rechazado");
     });
   }
 }
 
-/* 🔎 setup del buscador por boleta */
 function setupBuscador() {
   if (!$buscador) return;
 
@@ -314,13 +355,13 @@ function setupBuscador() {
   }
 }
 
-/* ✅ Filtros por estado */
 function setupFiltrosEstado() {
-  // Mostrar todas => realmente Pendientes (por requerimiento)
+  // Mostrar todas => Pendientes (por tu requerimiento)
   if ($btnTodas) {
     $btnTodas.addEventListener("click", async () => {
       estadoFiltro = "Pendiente";
-      await cargarSolicitudes({ escuelaId: escuelaFiltroId });
+      escuelaFiltroId = null;
+      await cargarSolicitudes({ escuelaId: null });
     });
   }
 
@@ -339,9 +380,10 @@ function setupFiltrosEstado() {
   }
 }
 
-// Escucha la escuela seleccionada desde escuelas.js para filtrar
+// Escucha la escuela seleccionada desde escuelas.js
 window.addEventListener("escuela:seleccionada", async (ev) => {
   const escuelaId = ev.detail?.escuelaId || null;
+  escuelaFiltroId = escuelaId;
   await cargarSolicitudes({ escuelaId });
 });
 
@@ -350,7 +392,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupBuscador();
   setupFiltrosEstado();
 
-  // ✅ carga inicial: Pendientes
+  // carga inicial: Pendientes
   estadoFiltro = "Pendiente";
-  await cargarSolicitudes();
+  await cargarSolicitudes({ escuelaId: null });
 });

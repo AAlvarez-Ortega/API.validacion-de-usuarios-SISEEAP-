@@ -8,6 +8,49 @@
   <link rel="stylesheet" href="./css/global.css">
   <link rel="stylesheet" href="./css/dashboard.css">
   <link rel="stylesheet" href="./css/solicitudes.css">
+
+  <!-- ✅ Badge de estado (puedes moverlo a solicitudes.css si quieres) -->
+  <style>
+    .badge-estado {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      line-height: 1;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .badge-estado--pendiente {
+      background: rgba(255, 193, 7, 0.18);
+      color: #8a6a00;
+      border-color: rgba(255, 193, 7, 0.35);
+    }
+
+    .badge-estado--aceptado {
+      background: rgba(46, 204, 113, 0.15);
+      color: #0f6b2e;
+      border-color: rgba(46, 204, 113, 0.35);
+    }
+
+    .badge-estado--rechazado {
+      background: rgba(231, 76, 60, 0.14);
+      color: #8a1f1f;
+      border-color: rgba(231, 76, 60, 0.35);
+    }
+
+    /* Para mostrar badge en lista al lado del nombre */
+    .solicitudItem__nameRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+  </style>
 </head>
 
 <body>
@@ -46,31 +89,29 @@
 
       <section class="solicitudesPage" aria-label="Solicitudes">
 
-       <header class="solicitudesHeader solicitudesHeader--row">
-  <div class="solicitudesHeader__left">
-    <div class="solicitudesHeader__brand">SISEAP</div>
-    <h1 class="solicitudesHeader__title">Solicitudes</h1>
-  </div>
+        <header class="solicitudesHeader solicitudesHeader--row">
+          <div class="solicitudesHeader__left">
+            <div class="solicitudesHeader__brand">SISEAP</div>
+            <h1 class="solicitudesHeader__title">Solicitudes</h1>
+          </div>
 
-  <!-- ✅ buscador alineado a la misma altura del título -->
-  <div class="solicitudesHeader__right">
-    <div class="solicitudesSearch solicitudesSearch--header">
-      <span class="solicitudesSearch__ico" aria-hidden="true"></span>
-      <input
-        id="buscadorSolicitudes"
-        class="solicitudesSearch__input"
-        type="text"
-        placeholder="Buscar por boleta..."
-        inputmode="numeric"
-        autocomplete="off"
-      />
-      <button class="solicitudesSearch__clear" id="btnClearSolicitudes" type="button" aria-label="Limpiar búsqueda">
-        ✕
-      </button>
-    </div>
-  </div>
-</header>
-
+          <div class="solicitudesHeader__right">
+            <div class="solicitudesSearch solicitudesSearch--header">
+              <span class="solicitudesSearch__ico" aria-hidden="true"></span>
+              <input
+                id="buscadorSolicitudes"
+                class="solicitudesSearch__input"
+                type="text"
+                placeholder="Buscar por boleta..."
+                inputmode="numeric"
+                autocomplete="off"
+              />
+              <button class="solicitudesSearch__clear" id="btnClearSolicitudes" type="button" aria-label="Limpiar búsqueda">
+                ✕
+              </button>
+            </div>
+          </div>
+        </header>
 
         <div class="solicitudesLayout">
 
@@ -82,7 +123,7 @@
           </aside>
 
           <!-- DETALLE -->
-          <section class="solicitudesDetail" aria-label="Detalle de solicitud"> 
+          <section class="solicitudesDetail" aria-label="Detalle de solicitud">
 
             <article class="cardCount" aria-label="Total de solicitudes">
               <div class="cardCount__label">Solicitudes</div>
@@ -98,10 +139,13 @@
               </div>
 
               <div class="cardDetail__info">
-               <p><strong>Boleta:</strong> <span id="alumnoBoleta">—</span></p>
-              <p><strong>Correo:</strong> <span id="alumnoCorreo">—</span></p>
-              <p><strong>Sede:</strong> <span id="alumnoSede">—</span></p>
-              <p><strong>Estado:</strong> <span id="alumnoEstado">—</span></p>
+                <p><strong>Boleta:</strong> <span id="alumnoBoleta">—</span></p>
+                <p><strong>Correo:</strong> <span id="alumnoCorreo">—</span></p>
+                <p><strong>Sede:</strong> <span id="alumnoSede">—</span></p>
+                <p>
+                  <strong>Estado:</strong>
+                  <span id="alumnoEstado" class="badge-estado">—</span>
+                </p>
               </div>
 
               <button class="btnPrimary hidden" id="btnVerificarRegistro" type="button">
@@ -154,13 +198,13 @@
             Selecciona una escuela para filtrar solicitudes.
           </div>
 
+          <!-- ✅ filtros -->
           <button class="btnAll" id="btnMostrarTodas" type="button">
             Mostrar todas las solicitudes
           </button>
           <button class="btnAll" id="btnVerAceptados" type="button">
             Ver Aceptados
           </button>
-
           <button class="btnAll" id="btnVerRechazados" type="button">
             Ver Rechazados
           </button>
@@ -184,30 +228,9 @@
   </div>
 
   <!-- Scripts -->
- 
-
   <script type="module" src="./JS/pantallaInicio/cerrarSesion.js"></script>
   <script type="module" src="./JS/escuelas.js"></script>
   <script type="module" src="./JS/pantallaSolicitudes/solicitudes.js"></script>
-
-  <!-- Handler del botón "Mostrar todas" -->
-  <script type="module">
-    const btn = document.getElementById("btnMostrarTodas");
-    if (btn) {
-      btn.addEventListener("click", () => {
-        window.dispatchEvent(
-          new CustomEvent("escuela:seleccionada", {
-            detail: { escuelaId: null, escuela: null }
-          })
-        );
-
-        const n = document.getElementById("nombreUsuario");
-        const d = document.getElementById("descripcionUsuario");
-        if (n) n.textContent = "IPN";
-        if (d) d.textContent = "Mostrando todas las solicitudes.";
-      });
-    }
-  </script>
 
 </body>
 </html>
