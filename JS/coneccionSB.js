@@ -1,14 +1,13 @@
-
-// JS/coneccionSB.js
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-const URL_SUPABASE = "https://acxfppvfzjihgkvvljoq.supabase.co";
-const CLAVE_PUBLICA_SUPABASE = "sb_publishable_8rTJbNVD_MdzSDZj6nS7ig_bDFK6s2a";
-
-export const supabase = createClient(URL_SUPABASE, CLAVE_PUBLICA_SUPABASE, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
+export const supabase = createClient(
+  "https://wdgsvdjojwjebjrpgopn.supabase.co",
+  "sb_publishable_TxHT2AsKDXlxYRGh0VgRMw_5VozTQ_p",
+  { auth: { storage: window.sessionStorage, storageKey: "sisaep-panel-auth",
+      persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
+    global: { fetch: (url, options = {}) => fetch(url, {
+      ...options, signal: options.signal
+        ? AbortSignal.any([options.signal, AbortSignal.timeout(20000)])
+        : AbortSignal.timeout(20000)
+    }) }
   }
-});
+);
