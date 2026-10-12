@@ -5,8 +5,17 @@ export function text(id, value) {
 }
 export function showSession(session) {
   text("nombreUsuario", session.nombre);
-  text("escuelaUsuario", `${session.escuela.siglas} · ${session.escuela.cct}`);
+  text("rolUsuario", nombreRol(session));
+  text("escuelaUsuario", session.rol === "administrador_aplicacion"
+    ? "Todas las escuelas" : `${session.escuela.siglas} · ${session.escuela.cct}`);
+  text("alcanceSolicitudes", session.rol === "administrador_aplicacion"
+    ? "Los conteos corresponden a todas las escuelas. Cada solicitud requiere revisión del responsable antes de cambiar su estado."
+    : "Los conteos corresponden a tu escuela. Cada solicitud requiere revisión del responsable antes de cambiar su estado.");
   document.body.dataset.ready = "true";
+}
+export function nombreRol(session) {
+  return session.rol === "administrador_aplicacion"
+    ? "Administrador de la aplicación" : "Director de escuela";
 }
 document.getElementById("btnLogout")?.addEventListener("click", async () => {
   const button = document.getElementById("btnLogout");
