@@ -1,5 +1,5 @@
 import { requireAdmin, rpc, mensajeError } from "./panel-api.js";
-import { text, showSession } from "./panel-ui.js";
+import { text, showSession, nombreRol } from "./panel-ui.js";
 try {
   const session = await requireAdmin();
   showSession(session);
@@ -8,12 +8,13 @@ try {
     text("contadorPendientes", data.totales.pendientes);
     text("contadorAceptados", data.totales.aceptados);
     text("contadorRechazados", data.totales.rechazados);
-    text("mensajePanel", "Solicitudes actualizadas de tu escuela.");
+    text("mensajePanel", session.rol === "administrador_aplicacion"
+      ? "Solicitudes actualizadas de todas las escuelas." : "Solicitudes actualizadas de tu escuela.");
   }
   if (document.getElementById("uNombreCompleto")) {
     text("uNombreCompleto", session.nombre);
     text("uCorreo", session.correo);
-    text("uRol", "Director");
-    text("uEscuela", session.escuela.nombre);
+    text("uRol", nombreRol(session));
+    text("uEscuela", session.rol === "administrador_aplicacion" ? "Todas las escuelas" : session.escuela.nombre);
   }
 } catch (error) { text("mensajePanel", mensajeError(error)); }
