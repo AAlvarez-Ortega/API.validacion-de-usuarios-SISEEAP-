@@ -1,53 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Validación - SISEAP</title>
-  <link rel="stylesheet" href="./css/bienvenidos.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'none'; img-src 'self' data:; style-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <title>Confirmación · App-SISAEP</title>
+  <link rel="stylesheet" href="./css/panel.css">
 </head>
-
 <body>
-
-  <div class="card">
-    <div class="check-circle">
-      <svg viewBox="0 0 24 24">
-        <path d="M5 13l4 4L19 7"/>
-      </svg>
-    </div>
-
-    <h1>Bienvenido a SISAAP</h1>
-    <p>Tu cuenta ha sido validada correctamente.<br>
-       Ya puedes iniciar sesión en la plataforma.</p>
-
-
-    <div class="footer">
-      Sistema Institucional de Seguimiento Educativo
-    </div>
-  </div>
-
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-const supabase = createClient(
-  "https://wdgsvdjojwjebjrpgopn.supabase.co",
-  "sb_publishable_TxHT2AsKDXlxYRGh0VgRMw_5VozTQ_p",
-  {
-    auth: {
-      detectSessionInUrl: true,
-      persistSession: true,
-    }
-  }
-);
-
-await supabase.auth.getSession();
-const { data } = await supabase.auth.getUser();
-
-if (!data.user) {
-  window.location.href = "./index.html";
-}
-</script>
-
-
+  <main class="content">
+    <section class="card">
+      <h1>Vuelve a App-SISAEP</h1>
+      <p id="confirmacionMensaje" role="status">Abre la aplicación e inicia sesión después de confirmar tu correo. Si el enlace caducó, solicita una nueva confirmación.</p>
+      <p>La aprobación de la solicitud y la confirmación del correo son pasos separados.</p>
+    </section>
+  </main>
+  <script src="./JS/confirmacion-page.js"></script>
 </body>
 </html>
