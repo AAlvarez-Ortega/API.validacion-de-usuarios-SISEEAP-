@@ -1,5 +1,5 @@
 import { requireAdmin, rpc, mensajeError } from "./panel-api.js";
-import { mensajeValidacion } from "./validacion-solicitud.js";
+import { mensajeValidacion, puedeAceptar } from "./validacion-solicitud.js";
 import { text, showSession, fecha } from "./panel-ui.js";
 const list = document.getElementById("listaSolicitudes");
 const detail = document.getElementById("detalleSolicitud");
@@ -19,7 +19,7 @@ const limit = 50;
 function controls() {
   const pending = selected?.estado === "Pendiente";
   document.getElementById("accionesRevision").hidden = !pending;
-  accept.disabled = busy || !pending || !check.checked || !selected?.cuenta_confirmada_coincide;
+  accept.disabled = !puedeAceptar(selected, check.checked, busy);
   reject.disabled = busy || !pending || !check.checked;
   check.disabled = busy;
   filter.disabled = busy;
@@ -45,6 +45,7 @@ function renderDetail(request) {
     text("revisadoEn", fecha(request.revisado_en));
     text("coincidePadron", mensajeValidacion(request.validacion_padron, "padron"));
     text("cuentaConfirmada", mensajeValidacion(request.validacion_cuenta, "cuenta"));
+    text("conflictoAlta", request.conflicto_identidad ? "Existe un registro relacionado con datos diferentes o duplicados. Corrige la identidad antes de aceptar; no se sobrescribirá otra cuenta." : "");
   }
   controls();
 }
@@ -91,9 +92,11 @@ async function load() {
 }
 async function review(state) {
   if (busy || selected?.estado !== "Pendiente" || !check.checked) return;
-  if (state === "Aceptado" && !selected.cuenta_confirmada_coincide) return;
+  if (state === "Aceptado" && !puedeAceptar(selected, check.checked, busy)) return;
   const request = selected;
-  if (!window.confirm(`¿Marcar como ${state.toLowerCase()} la solicitud de ${request.nombre} ${request.apellido_paterno}, boleta/empleado ${request.boleta_o_empleado}?`)) return;
+  const accion = state === "Aceptado" ? "Aceptar y validar en el padrón" : "Rechazar";
+  const detalle = state === "Aceptado" ? " La aprobación da de alta el padrón; la persona activará su cuenta desde la app si aún no tiene acceso." : "";
+  if (!window.confirm(`${accion} la solicitud de ${request.nombre} ${request.apellido_paterno}, boleta/empleado ${request.boleta_o_empleado}?${detalle}`)) return;
   busy = true; ++generation; controls(); renderList();
   text("mensajePanel", "Guardando revisión…");
   let resultMessage;
