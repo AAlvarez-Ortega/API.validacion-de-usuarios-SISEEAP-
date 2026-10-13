@@ -6,7 +6,7 @@ export async function rpc(name, params = {}) {
 }
 export function mensajeError(error) {
   if (error?.code === "42501") return "Esta cuenta no tiene acceso administrativo a estas solicitudes.";
-  if (["PT409", "40001"].includes(error?.code)) return "La solicitud ya fue revisada. Actualiza la lista.";
+  if (["PT409", "40001"].includes(error?.code)) return "La solicitud cambió o ya fue revisada. Actualiza la lista y vuelve a comprobar sus datos.";
   if (error?.code === "23514") return "Para aceptar se necesita una cuenta confirmada con datos coincidentes.";
   if (error?.code === "22023") return "Revisa los datos y filtros e intenta de nuevo.";
   return "No se pudo completar la operación. Comprueba la conexión e intenta de nuevo.";
