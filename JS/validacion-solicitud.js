@@ -4,7 +4,7 @@ export function mensajeValidacion(validacion, tipo) {
   const fuente = tipo === "padron" ? "padrón" : "cuenta";
   switch (validacion?.estado) {
     case "coincidente": return tipo === "padron" ? "Los datos coinciden con el padrón." : "Cuenta confirmada con datos coincidentes.";
-    case "faltante": return tipo === "padron" ? "No hay un registro previo en el padrón relacionado con esta boleta, correo o CURP. El responsable debe realizar el alta." : "No existe una cuenta de acceso con el correo de la solicitud. El responsable debe crear o invitar la cuenta.";
+    case "faltante": return tipo === "padron" ? "No hay un registro previo en el padrón relacionado con esta boleta, correo o CURP. Al aceptar, se dará de alta con los datos que validaste." : "No existe una cuenta de acceso con el correo de la solicitud. Esto no impide aprobarla: después de la aprobación, la persona activará su cuenta desde la app.";
     case "sin_confirmar": return "La cuenta existe, pero su correo aún no está confirmado.";
     case "sin_perfil": return "El correo está confirmado, pero falta el perfil de la aplicación.";
     case "ambiguo": return "Hay varios registros relacionados en el padrón. El responsable debe comprobar cuál corresponde a esta persona.";
@@ -14,4 +14,9 @@ export function mensajeValidacion(validacion, tipo) {
     }
     default: return "No se pudo obtener el detalle de la validación. Actualiza la lista antes de revisar.";
   }
+}
+
+// La elegibilidad viene del servidor; sin ese dato no se habilita la aceptación.
+export function puedeAceptar(solicitud, revisada, ocupado = false) {
+  return !ocupado && revisada && solicitud?.estado === "Pendiente" && solicitud?.puede_aceptar === true;
 }

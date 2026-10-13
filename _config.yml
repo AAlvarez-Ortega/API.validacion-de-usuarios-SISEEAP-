@@ -1,7 +1,6 @@
 # GitHub Pages publica sólo el panel vigente. El código legado queda fuera del sitio.
 encoding: utf-8
 exclude:
-  - "Bienvenido.html"
   - "Gemfile"
   - "Gemfile.lock"
   - "JS/PantallaInicioSesion/cambiarContrasena.js"
