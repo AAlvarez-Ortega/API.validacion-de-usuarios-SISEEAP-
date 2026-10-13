@@ -4,18 +4,28 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'none'; img-src 'self' data:; style-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src https://wdgsvdjojwjebjrpgopn.supabase.co; img-src 'self' data:; style-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
   <title>Confirmación · App-SISAEP</title>
   <link rel="stylesheet" href="./css/panel.css">
 </head>
-<body>
-  <main class="content">
-    <section class="card">
-      <h1>Vuelve a App-SISAEP</h1>
-      <p id="confirmacionMensaje" role="status">Abre la aplicación e inicia sesión después de confirmar tu correo. Si el enlace caducó, solicita una nueva confirmación.</p>
+<body class="login-body">
+  <main class="login-card">
+    <section>
+      <h1 id="confirmacionTitulo">Confirma tu correo</h1>
+      <p id="confirmacionMensaje" role="status" aria-live="polite">Escribe el correo de tu cuenta y el código de seis dígitos que recibiste. Si ya confirmaste tu correo, abre App-SISAEP e inicia sesión.</p>
+      <form id="confirmacionForm" novalidate>
+        <label for="confirmacionCorreo">Correo de tu cuenta</label>
+        <input id="confirmacionCorreo" type="email" autocomplete="email" maxlength="254" required>
+        <label for="confirmacionCodigo">Código de confirmación</label>
+        <input id="confirmacionCodigo" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required>
+        <div class="review-buttons">
+          <button id="btnConfirmarCorreo" type="submit" class="primary">Confirmar correo</button>
+          <button id="btnReenviarCodigo" type="button">Reenviar código</button>
+        </div>
+      </form>
       <p>La aprobación de la solicitud y la confirmación del correo son pasos separados.</p>
     </section>
   </main>
-  <script src="./JS/confirmacion-page.js"></script>
+  <script type="module" src="./JS/confirmacion-page.js"></script>
 </body>
 </html>
