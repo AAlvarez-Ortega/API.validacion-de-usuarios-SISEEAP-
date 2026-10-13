@@ -49,11 +49,11 @@ test('los enlaces antiguos se comprueban con Auth antes de mostrar confirmación
  assert.equal(await api.comprobarEnlace('token-ficticio'),false);
  assert.equal(headers.Authorization,'Bearer token-ficticio');
 });
-test('correo incluye OTP y una dirección sin secreto, sin enlace que un lector pueda consumir',async()=>{
+test('correo incluye OTP para la app, sin enlace que un lector pueda consumir',async()=>{
  const template=await readFile(new URL('../supabase/templates/confirmar-correo.html',import.meta.url),'utf8');
  assert.match(template,/\{\{ \.Token \}\}/);
- assert.match(template,/href="\{\{ \.SiteURL \}\}"/);
- assert.doesNotMatch(template,/ConfirmationURL|TokenHash/);
+ assert.match(template,/Ya tengo un código de confirmación/);
+ assert.doesNotMatch(template,/href=|ConfirmationURL|TokenHash/);
 });
 test('errores SMTP y límites no se confunden con rechazo de la solicitud',()=>{
  assert.match(api.mensajeErrorConfirmacion({code:'email_address_not_authorized'}),/SMTP/);
