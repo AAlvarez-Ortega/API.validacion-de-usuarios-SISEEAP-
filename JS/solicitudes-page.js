@@ -1,4 +1,5 @@
 import { requireAdmin, rpc, mensajeError } from "./panel-api.js";
+import { mensajeValidacion } from "./validacion-solicitud.js";
 import { text, showSession, fecha } from "./panel-ui.js";
 const list = document.getElementById("listaSolicitudes");
 const detail = document.getElementById("detalleSolicitud");
@@ -42,8 +43,8 @@ function renderDetail(request) {
     document.getElementById("alumnoEstado").className = `badge ${request.estado.toLowerCase()}`;
     text("creadoEn", fecha(request.creado_en));
     text("revisadoEn", fecha(request.revisado_en));
-    text("coincidePadron", request.coincide_padron ? "Los datos coinciden con el padrón." : "Sin coincidencia completa en el padrón. Revisa con el responsable.");
-    text("cuentaConfirmada", request.cuenta_confirmada_coincide ? "Cuenta confirmada con datos coincidentes." : "Aún no hay una cuenta confirmada coincidente. La aceptación permanecerá bloqueada.");
+    text("coincidePadron", mensajeValidacion(request.validacion_padron, "padron"));
+    text("cuentaConfirmada", mensajeValidacion(request.validacion_cuenta, "cuenta"));
   }
   controls();
 }
@@ -97,7 +98,7 @@ async function review(state) {
   text("mensajePanel", "Guardando revisión…");
   let resultMessage;
   try {
-    await rpc("sisaep_admin_revisar", { p_id: request.id, p_estado: state, p_estado_esperado: "Pendiente" });
+    await rpc("sisaep_admin_revisar_version", { p_id: request.id, p_estado: state, p_estado_esperado: "Pendiente", p_version: request.version });
     resultMessage = `Solicitud marcada como ${state.toLowerCase()}.`;
   } catch (error) { resultMessage = mensajeError(error); }
   finally {
