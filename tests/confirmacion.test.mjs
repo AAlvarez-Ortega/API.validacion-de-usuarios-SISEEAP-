@@ -11,10 +11,10 @@ test('verifica OTP por POST y exige correo confirmado por el servidor',async()=>
   request={url,options};
   return new Response(JSON.stringify({user:{email:'qa@example.com',email_confirmed_at:'2026-10-13'}}));
  };
- assert.equal(await api.verificarCodigo(' QA@example.com ','123456'),true);
+ assert.equal(await api.verificarCodigo(' QA@example.com ','12345678'),true);
  assert.equal(request.url,'https://wdgsvdjojwjebjrpgopn.supabase.co/auth/v1/verify');
  assert.equal(request.options.method,'POST');
- assert.deepEqual(JSON.parse(request.options.body),{email:'qa@example.com',token:'123456',type:'email'});
+ assert.deepEqual(JSON.parse(request.options.body),{email:'qa@example.com',token:'12345678',type:'email'});
  assert.equal(request.options.credentials,'omit');
 });
 test('un usuario sin confirmar o de otro correo nunca muestra éxito',async()=>{
@@ -26,6 +26,8 @@ test('un usuario sin confirmar o de otro correo nunca muestra éxito',async()=>{
 test('validación incompleta no envía códigos ni solicitudes',async()=>{
  let calls=0;globalThis.fetch=async()=>{calls++;throw Error('No debe llamarse');};
  await assert.rejects(api.verificarCodigo('qa@example.com','12345'));
+ await assert.rejects(api.verificarCodigo('qa@example.com','00000000000'));
+ await assert.rejects(api.verificarCodigo('qa@example.com','１２３４５６７８'));
  await assert.rejects(api.verificarCodigo('sin-correo','123456'));
  await assert.rejects(api.reenviarCodigo('sin-correo'));
  assert.equal(calls,0);
