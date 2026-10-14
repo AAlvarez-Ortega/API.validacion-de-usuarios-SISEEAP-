@@ -22,7 +22,7 @@ async function request(path, body, accessToken) {
 export async function verificarCodigo(correo, codigo) {
   const email = correo.trim().toLowerCase();
   const token = codigo.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^\d{6}$/.test(token)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^[0-9]{6,10}$/.test(token)) {
     const error = new Error("DATOS_INVALIDOS"); error.code = "datos_invalidos"; throw error;
   }
   const data = await request("verify", { email, token, type: "email" });
@@ -47,7 +47,7 @@ export async function reenviarCodigo(correo) {
 }
 
 export function mensajeErrorConfirmacion(error) {
-  if (error?.code === "datos_invalidos") return "Escribe el correo de tu cuenta y el código de seis dígitos que recibiste.";
+  if (error?.code === "datos_invalidos") return "Escribe el correo de tu cuenta y el código numérico completo que recibiste.";
   if (["otp_expired", "otp_disabled", "invalid_credentials"].includes(error?.code)) return "El código o enlace venció, ya fue usado o no corresponde a este correo. Si ya confirmaste tu correo, abre la app e inicia sesión. Si aún está pendiente, reenvía la confirmación y usa sólo el código más reciente.";
   if (["over_email_send_rate_limit", "over_request_rate_limit"].includes(error?.code) || error?.status === 429) return "Se alcanzó el límite temporal de correos. Espera antes de solicitar otro código; tu aprobación se conserva.";
   if (error?.code === "email_address_not_authorized") return "El envío a esta dirección requiere configurar SMTP en Supabase. Tu solicitud aprobada se conserva.";
