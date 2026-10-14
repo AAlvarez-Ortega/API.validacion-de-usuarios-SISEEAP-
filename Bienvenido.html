@@ -12,12 +12,12 @@
   <main class="login-card">
     <section>
       <h1 id="confirmacionTitulo">Confirma tu correo</h1>
-      <p id="confirmacionMensaje" role="status" aria-live="polite">Escribe el correo de tu cuenta y el código de seis dígitos que recibiste. Si ya confirmaste tu correo, abre App-SISAEP e inicia sesión.</p>
+      <p id="confirmacionMensaje" role="status" aria-live="polite">Escribe el correo de tu cuenta y el código completo que recibiste. Si ya confirmaste tu correo, abre App-SISAEP e inicia sesión.</p>
       <form id="confirmacionForm" novalidate>
         <label for="confirmacionCorreo">Correo de tu cuenta</label>
         <input id="confirmacionCorreo" type="email" autocomplete="email" maxlength="254" required>
         <label for="confirmacionCodigo">Código de confirmación</label>
-        <input id="confirmacionCodigo" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required>
+        <input id="confirmacionCodigo" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,10}" maxlength="10" required>
         <div class="review-buttons">
           <button id="btnConfirmarCorreo" type="submit" class="primary">Confirmar correo</button>
           <button id="btnReenviarCodigo" type="button">Reenviar código</button>
