@@ -1,10 +1,24 @@
-import {requireAdmin,rpc} from './panel-api.js';
-import {showSession,text} from './panel-ui.js';
-import {clavePrograma,etiquetaPrograma,datosMateria,datosPrograma,errorCatalogo} from './catalogo-form.js';
+import {requireAdmin,rpc} from './panel-api.js?v=1.24.0-d51c0ad549ef';
+import {showSession,text} from './panel-ui.js?v=1.24.0-d51c0ad549ef';
+import {clavePrograma,etiquetaPrograma,etiquetaAsignacionPrograma,opcionesFiltrosCatalogo,filtrarMateriasCatalogo,datosMateria,datosPrograma,errorCatalogo} from './catalogo-form.js?v=1.24.0-d51c0ad549ef';
 const $=id=>document.getElementById(id);let catalogo=null,seleccion=null,ocupado=false,sucio=false;
 function el(tag,label){const n=document.createElement(tag);if(label!==undefined)n.textContent=label;return n;}
 function opciones(select,items,placeholder){select.replaceChildren();if(placeholder){const o=el('option',placeholder);o.value='';select.append(o);}for(const [value,label] of items){const o=el('option',label);o.value=value;select.append(o);}}
 function permitirCambio(){return !sucio||window.confirm('Hay cambios sin guardar. ¿Quieres descartarlos?');}
+function filtros(){return {plan:$('filtrarPlan').value,carrera:$('filtrarCarrera').value,semestre:$('filtrarSemestre').value,busqueda:$('buscarMateria').value};}
+function dibujarFiltros(previos=filtros()){
+ const plans=opcionesFiltrosCatalogo(catalogo).planes;
+ opciones($('filtrarPlan'),plans.map(p=>[p.id,p.nombre]),'Todos los planes');
+ $('filtrarPlan').value=plans.some(p=>p.id===previos.plan)?previos.plan:'';
+ const careers=opcionesFiltrosCatalogo(catalogo,{plan:$('filtrarPlan').value}).carreras;
+ opciones($('filtrarCarrera'),careers.map(c=>[c.id,c.nombre]),$('filtrarPlan').value?'Todas las carreras':'Selecciona un plan');
+ $('filtrarCarrera').disabled=!$('filtrarPlan').value;
+ $('filtrarCarrera').value=careers.some(c=>c.id===previos.carrera)?previos.carrera:'';
+ const semesters=opcionesFiltrosCatalogo(catalogo,{plan:$('filtrarPlan').value,carrera:$('filtrarCarrera').value}).semestres;
+ opciones($('filtrarSemestre'),semesters.map(s=>[s.id,s.nombre]),$('filtrarCarrera').value?'Todos los semestres':'Selecciona una carrera');
+ $('filtrarSemestre').disabled=!$('filtrarCarrera').value;
+ $('filtrarSemestre').value=semesters.some(s=>s.id===previos.semestre)?previos.semestre:'';
+}
 function dibujarEditor(item=null){
  seleccion=item;sucio=false;text('tituloMateria',item?'Editar materia':'Nueva materia');$('codigoMateria').value=item?.codigo||'';$('codigoMateria').disabled=!!item;
  $('nombreMateria').value=item?.nombre||'';$('materiaActiva').checked=item?.activa!==false;$('programasMateria').replaceChildren();
@@ -14,16 +28,16 @@ function dibujarEditor(item=null){
  $('guardarMateria').disabled=!catalogo.programas.length;
 }
 function dibujarLista(){
- const q=$('buscarMateria').value.trim().toLocaleLowerCase('es'),program=$('filtrarPrograma').value;
- const rows=catalogo.materias.filter(m=>(!q||`${m.codigo} ${m.nombre}`.toLocaleLowerCase('es').includes(q))&&(!program||m.programas.some(p=>clavePrograma(p)===program)));
+ const rows=filtrarMateriasCatalogo(catalogo,filtros());
  text('totalMaterias',`${rows.length} materias`);$('listaMaterias').replaceChildren();
- for(const m of rows){const b=el('button',`${m.codigo} · ${m.nombre}${m.activa?'':' · Pausada'}`);b.type='button';b.className='solicitudItem';const labels=m.programas.map(p=>etiquetaPrograma(catalogo.programas.find(x=>clavePrograma(x)===clavePrograma(p))||{...p,nombre_carrera:'Carrera '+p.id_carrera}));b.append(el('span',labels.join(' / ')));b.addEventListener('click',()=>{if(!ocupado&&permitirCambio())dibujarEditor(m);});$('listaMaterias').append(b);}
+ for(const m of rows){const b=el('button',`${m.codigo} · ${m.nombre}${m.activa?'':' · Pausada'}`);b.type='button';b.className='solicitudItem';const labels=m.programas.map(p=>etiquetaAsignacionPrograma(catalogo.programas.find(x=>clavePrograma(x)===clavePrograma(p))||{...p,nombre_carrera:'Carrera '+p.id_carrera},p));b.append(el('span',labels.join(' / ')));b.addEventListener('click',()=>{if(!ocupado&&permitirCambio())dibujarEditor(m);});$('listaMaterias').append(b);}
  if(!rows.length)$('listaMaterias').append(el('p','No hay materias con estos filtros.'));
 }
 async function cargar(cct=null,codigo=null){
+ const previos=catalogo&&(!cct||cct===catalogo.escuela_cct)?filtros():{plan:'',carrera:'',semestre:''};
  const nuevo=await rpc('sisaep_admin_catalogo',{p_cct:cct});catalogo=nuevo;
  opciones($('escuelaCatalogo'),catalogo.escuelas.map(e=>[e.cct,`${e.siglas} · ${e.cct}`]));$('escuelaCatalogo').value=catalogo.escuela_cct;$('escuelaCatalogo').disabled=catalogo.escuelas.length===1;
- opciones($('filtrarPrograma'),catalogo.programas.map(p=>[clavePrograma(p),etiquetaPrograma(p)]),'Todas');
+ dibujarFiltros(previos);
  opciones($('carreraPrograma'),[...catalogo.carreras.map(c=>[String(c.id),c.nombre]),['nueva','Registrar una nueva carrera']],'Seleccionar carrera');
  $('campoCarreraNueva').hidden=true;$('nombreCarreraNueva').value='';$('planPrograma').value='';$('planesCatalogo').replaceChildren();
  for(const p of catalogo.planes){const o=el('option',p.nombre);o.value=String(p.id);$('planesCatalogo').append(o);}
@@ -31,7 +45,10 @@ async function cargar(cct=null,codigo=null){
 }
 async function ejecutar(fn){if(ocupado)return;ocupado=true;for(const id of ['guardarMateria','guardarPrograma','actualizarCatalogo','nuevaMateria'])$(id).disabled=true;
  try{await fn();}catch(e){text('mensajePanel',errorCatalogo(e));}finally{ocupado=false;for(const id of ['guardarPrograma','actualizarCatalogo','nuevaMateria'])$(id).disabled=false;$('guardarMateria').disabled=!catalogo?.programas.length;}}
-$('buscarMateria').addEventListener('input',()=>catalogo&&dibujarLista());$('filtrarPrograma').addEventListener('change',()=>catalogo&&dibujarLista());
+$('buscarMateria').addEventListener('input',()=>catalogo&&dibujarLista());
+$('filtrarPlan').addEventListener('change',()=>{if(catalogo){dibujarFiltros({plan:$('filtrarPlan').value,carrera:'',semestre:''});dibujarLista();}});
+$('filtrarCarrera').addEventListener('change',()=>{if(catalogo){dibujarFiltros({plan:$('filtrarPlan').value,carrera:$('filtrarCarrera').value,semestre:''});dibujarLista();}});
+$('filtrarSemestre').addEventListener('change',()=>catalogo&&dibujarLista());
 $('formMateriaCatalogo').addEventListener('input',()=>{sucio=true;});
 $('nuevaMateria').addEventListener('click',()=>{if(catalogo&&permitirCambio())dibujarEditor();});
 $('actualizarCatalogo').addEventListener('click',()=>{if(permitirCambio())ejecutar(async()=>{await cargar(catalogo?.escuela_cct,seleccion?.codigo);text('mensajePanel','Catálogo actualizado.');});});
