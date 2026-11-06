@@ -1,8 +1,8 @@
-import { requireAdmin, rpc, mensajeError } from './panel-api.js?v=1.24.0-d51c0ad549ef';
-import { text, showSession, fecha } from './panel-ui.js?v=1.24.0-d51c0ad549ef';
-import { supabase } from './coneccionSB.js?v=1.24.0-d51c0ad549ef';
-import { lecturaDocumental, ErrorLecturaDocumental } from './constancias-form.js?v=1.24.0-d51c0ad549ef';
-import { prepararPilotoConstancias } from './piloto-constancias.js?v=1.24.0-d51c0ad549ef';
+import { requireAdmin, rpc, mensajeError } from './panel-api.js?v=1.24.0-f51ad1994ee7';
+import { text, showSession, fecha } from './panel-ui.js?v=1.24.0-f51ad1994ee7';
+import { supabase } from './coneccionSB.js?v=1.24.0-f51ad1994ee7';
+import { lecturaDocumental, ErrorLecturaDocumental } from './constancias-form.js?v=1.24.0-f51ad1994ee7';
+import { prepararPilotoConstancias } from './piloto-constancias.js?v=1.24.0-f51ad1994ee7';
 
 const $ = id => document.getElementById(id);
 let offset = 0, seleccion = null, ocupada = false;

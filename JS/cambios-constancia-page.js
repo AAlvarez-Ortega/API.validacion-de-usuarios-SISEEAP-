@@ -1,7 +1,7 @@
-import {requireAdmin,rpc,mensajeError} from './panel-api.js?v=1.24.0-d51c0ad549ef';
-import {text,showSession,fecha} from './panel-ui.js?v=1.24.0-d51c0ad549ef';
-import {supabase} from './coneccionSB.js?v=1.24.0-d51c0ad549ef';
-import {revisionBaja} from './cambios-constancia-form.js?v=1.24.0-d51c0ad549ef';
+import {requireAdmin,rpc,mensajeError} from './panel-api.js?v=1.24.0-f51ad1994ee7';
+import {text,showSession,fecha} from './panel-ui.js?v=1.24.0-f51ad1994ee7';
+import {supabase} from './coneccionSB.js?v=1.24.0-f51ad1994ee7';
+import {revisionBaja} from './cambios-constancia-form.js?v=1.24.0-f51ad1994ee7';
 const $=id=>document.getElementById(id);let offset=0,seleccion=null,ocupada=false;
 function node(tag,value) { const e=document.createElement(tag);if(value!==undefined)e.textContent=value;return e; }
 async function cargar() {
@@ -14,6 +14,7 @@ async function cargar() {
     b.addEventListener('click',()=>seleccionar(item));$('listaCambios').append(b);
   }
   if(!items.length)$('listaCambios').append(node('p','No hay cambios pendientes en esta página.'));
+  text('mensajePanel','Pendientes actualizados.');
 }
 function seleccionar(item) {
   seleccion=item;$('formCambio').hidden=false;

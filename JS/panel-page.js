@@ -1,5 +1,5 @@
-import { requireAdmin, rpc, mensajeError } from "./panel-api.js?v=1.24.0-d51c0ad549ef";
-import { text, showSession, nombreRol } from "./panel-ui.js?v=1.24.0-d51c0ad549ef";
+import { requireAdmin, rpc, mensajeError } from "./panel-api.js?v=1.24.0-f51ad1994ee7";
+import { text, showSession, nombreRol } from "./panel-ui.js?v=1.24.0-f51ad1994ee7";
 try {
   const session = await requireAdmin();
   showSession(session);

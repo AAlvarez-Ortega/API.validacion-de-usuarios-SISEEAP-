@@ -1,4 +1,4 @@
-import { supabase } from "./coneccionSB.js?v=1.24.0-d51c0ad549ef";
+import { supabase } from "./coneccionSB.js?v=1.24.0-f51ad1994ee7";
 export function text(id, value) {
   const element = document.getElementById(id);
   if (element) element.textContent = value ?? "—";
@@ -22,7 +22,7 @@ document.getElementById("btnLogout")?.addEventListener("click", async () => {
   button.disabled = true;
   const { error } = await supabase.auth.signOut({ scope: "local" });
   if (error) { text("mensajePanel", "No se pudo cerrar sesión. Intenta de nuevo."); button.disabled = false; return; }
-  location.replace("./index.html?v=1.24.0-d51c0ad549ef");
+  location.replace("./index.html?v=1.24.0-f51ad1994ee7");
 });
 export function fecha(value) {
   return value ? new Date(value).toLocaleString("es-MX", { dateStyle: "medium", timeStyle: "short" }) : "—";
