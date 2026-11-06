@@ -1,6 +1,6 @@
-import {requireAdmin,rpc} from './panel-api.js?v=1.24.0-d51c0ad549ef';
-import {showSession,text} from './panel-ui.js?v=1.24.0-d51c0ad549ef';
-import {clavePrograma,etiquetaPrograma,etiquetaAsignacionPrograma,opcionesFiltrosCatalogo,filtrarMateriasCatalogo,datosMateria,datosPrograma,errorCatalogo} from './catalogo-form.js?v=1.24.0-d51c0ad549ef';
+import {requireAdmin,rpc} from './panel-api.js?v=1.24.0-f51ad1994ee7';
+import {showSession,text} from './panel-ui.js?v=1.24.0-f51ad1994ee7';
+import {clavePrograma,etiquetaPrograma,etiquetaAsignacionPrograma,opcionesFiltrosCatalogo,filtrarMateriasCatalogo,datosMateria,datosPrograma,errorCatalogo} from './catalogo-form.js?v=1.24.0-f51ad1994ee7';
 const $=id=>document.getElementById(id);let catalogo=null,seleccion=null,ocupado=false,sucio=false;
 function el(tag,label){const n=document.createElement(tag);if(label!==undefined)n.textContent=label;return n;}
 function opciones(select,items,placeholder){select.replaceChildren();if(placeholder){const o=el('option',placeholder);o.value='';select.append(o);}for(const [value,label] of items){const o=el('option',label);o.value=value;select.append(o);}}

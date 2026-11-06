@@ -1,4 +1,4 @@
-import { supabase } from "./coneccionSB.js?v=1.24.0-d51c0ad549ef";
+import { supabase } from "./coneccionSB.js?v=1.24.0-f51ad1994ee7";
 export async function rpc(name, params = {}) {
   const { data, error } = await supabase.rpc(name, params);
   if (error) throw error;
@@ -16,14 +16,14 @@ export function requireAdmin() {
   guardPromise ??= (async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data?.user) {
-      location.replace("./index.html?v=1.24.0-d51c0ad549ef");
+      location.replace("./index.html?v=1.24.0-f51ad1994ee7");
       throw new Error("SESION_REQUERIDA");
     }
     try { return await rpc("sisaep_admin_sesion"); }
     catch (error) {
       sessionStorage.setItem("panel-login-error", mensajeError(error));
       if (error?.code === "42501") await supabase.auth.signOut({ scope: "local" });
-      location.replace("./index.html?v=1.24.0-d51c0ad549ef");
+      location.replace("./index.html?v=1.24.0-f51ad1994ee7");
       throw error;
     }
   })();

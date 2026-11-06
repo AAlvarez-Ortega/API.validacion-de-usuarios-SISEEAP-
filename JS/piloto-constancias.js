@@ -1,6 +1,6 @@
-import {rpc,mensajeError} from './panel-api.js?v=1.24.0-d51c0ad549ef';
-import {text} from './panel-ui.js?v=1.24.0-d51c0ad549ef';
-import {configuracionPiloto} from './piloto-constancias-form.js?v=1.24.0-d51c0ad549ef';
+import {rpc,mensajeError} from './panel-api.js?v=1.24.0-f51ad1994ee7';
+import {text} from './panel-ui.js?v=1.24.0-f51ad1994ee7';
+import {configuracionPiloto} from './piloto-constancias-form.js?v=1.24.0-f51ad1994ee7';
 export async function prepararPilotoConstancias() {
   const form=document.getElementById('formPilotoConstancias');if(!form)return;
   const selector=document.getElementById('escuelaPiloto'),check=document.getElementById('habilitarPiloto');
