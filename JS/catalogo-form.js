@@ -1,5 +1,26 @@
 export const clavePrograma=p=>`${p.id_plan}/${p.id_carrera}`;
 export const etiquetaPrograma=p=>`${p.nombre_carrera} · Plan ${p.id_plan}`;
+export const etiquetaSemestre=s=>Number(s)===0?'Sin semestre especificado':`Semestre ${s}`;
+const mismoId=(id,value)=>String(id)===String(value);
+const semestrePrograma=p=>Number.isInteger(p.semestre)&&p.semestre>0?p.semestre:0;
+export function opcionesFiltrosCatalogo(catalogo,{plan='',carrera=''}={}){
+ const programas=catalogo.programas||[];
+ const planes=[...new Map(programas.map(p=>[String(p.id_plan),{id:String(p.id_plan),nombre:`Plan ${p.id_plan}`}])).values()].sort((a,b)=>Number(b.id)-Number(a.id));
+ const carreras=plan?[...new Map(programas.filter(p=>mismoId(p.id_plan,plan)).map(p=>[String(p.id_carrera),{id:String(p.id_carrera),nombre:p.nombre_carrera}])).values()].sort((a,b)=>a.nombre.localeCompare(b.nombre,'es')):[];
+ const semestres=plan&&carrera?[...new Set((catalogo.materias||[]).flatMap(m=>(m.programas||[]).filter(p=>mismoId(p.id_plan,plan)&&mismoId(p.id_carrera,carrera)).map(semestrePrograma)))].sort((a,b)=>a-b).map(s=>({id:String(s),nombre:etiquetaSemestre(s)})):[];
+ return {planes,carreras,semestres};
+}
+export function filtrarMateriasCatalogo(catalogo,{plan='',carrera='',semestre='',busqueda=''}={}){
+ const q=String(busqueda).trim().toLocaleLowerCase('es');
+ return (catalogo.materias||[]).filter(m=>(!q||`${m.codigo} ${m.nombre}`.toLocaleLowerCase('es').includes(q))&&
+  ((!plan&&!carrera&&semestre==='')||(m.programas||[]).some(p=>(!plan||mismoId(p.id_plan,plan))&&(!carrera||mismoId(p.id_carrera,carrera))&&(semestre===''||mismoId(semestrePrograma(p),semestre)))));
+}
+export function etiquetaAsignacionPrograma(programa,asignacion){
+ const details=[etiquetaPrograma(programa),etiquetaSemestre(semestrePrograma(asignacion))];
+ if(asignacion.optativa)details.push(asignacion.optativa);
+ if(asignacion.trayectoria)details.push(asignacion.trayectoria);
+ return details.join(' · ');
+}
 export function datosMateria({cct,codigo,nombre,programas,activa,revision}){
  const code=String(codigo||'').trim().toUpperCase(),name=String(nombre||'').trim();
  if(!/^[A-Z0-9]{10}$/.test(cct||''))throw Error('Selecciona la escuela.');

@@ -1,6 +1,6 @@
-import { requireAdmin, rpc, mensajeError } from "./panel-api.js";
-import { mensajeValidacion, puedeAceptar } from "./validacion-solicitud.js";
-import { text, showSession, fecha } from "./panel-ui.js";
+import { requireAdmin, rpc, mensajeError } from "./panel-api.js?v=1.24.0-d51c0ad549ef";
+import { mensajeValidacion, puedeAceptar } from "./validacion-solicitud.js?v=1.24.0-d51c0ad549ef";
+import { text, showSession, fecha } from "./panel-ui.js?v=1.24.0-d51c0ad549ef";
 const list = document.getElementById("listaSolicitudes");
 const detail = document.getElementById("detalleSolicitud");
 const check = document.getElementById("revisionManual");

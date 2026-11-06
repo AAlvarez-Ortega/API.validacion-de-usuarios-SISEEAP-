@@ -1,5 +1,5 @@
-import { supabase } from "./coneccionSB.js";
-import { rpc, mensajeError } from "./panel-api.js";
+import { supabase } from "./coneccionSB.js?v=1.24.0-d51c0ad549ef";
+import { rpc, mensajeError } from "./panel-api.js?v=1.24.0-d51c0ad549ef";
 const form = document.getElementById("formInicioSesion");
 const message = document.getElementById("mensajeFormulario");
 const button = document.getElementById("btnIniciarSesion");
@@ -24,7 +24,7 @@ form.addEventListener("submit", async event => {
     signedIn = true;
     await rpc("sisaep_admin_sesion");
     password.value = "";
-    location.assign("./inicio.html");
+    location.assign("./inicio.html?v=1.24.0-d51c0ad549ef");
   } catch (error) {
     message.textContent = mensajeError(error);
     if (signedIn) await supabase.auth.signOut({ scope: "local" });
