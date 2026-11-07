@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; connect-src https://wdgsvdjojwjebjrpgopn.supabase.co; img-src 'self' data:; style-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Importar horarios · App-SISAEP</title>
+  <link rel="stylesheet" href="./css/panel.css?v=1.24.0-8e0d3803ae2b">
+</head>
+<body><div class="shell">
+  <aside class="side"><img src="./img/Upiicsa.png?v=1.24.0-8e0d3803ae2b" alt="UPIICSA"><span class="eyebrow">App-SISAEP</span>
+    <nav aria-label="Navegación principal"><a href="./inicio.html?v=1.24.0-8e0d3803ae2b">Inicio</a><a href="./materias.html?v=1.24.0-8e0d3803ae2b">Materias y carreras</a><a href="./importar-horarios.html?v=1.24.0-8e0d3803ae2b" aria-current="page">Importar horarios</a><a href="./constancias.html?v=1.24.0-8e0d3803ae2b">Constancias</a><a href="./usuario.html?v=1.24.0-8e0d3803ae2b">Mi perfil</a></nav>
+    <button id="btnLogout" type="button">Cerrar sesión</button>
+  </aside>
+  <main class="content">
+    <header class="header"><div><p class="eyebrow">Oferta semestral</p><h1>Importar horarios</h1></div><div class="user protected"><strong id="nombreUsuario"></strong><span id="rolUsuario"></span><span id="escuelaUsuario"></span></div></header>
+    <p id="mensajePanel" class="message" role="status" aria-live="polite">Comprobando acceso…</p>
+    <div class="protected importacion-horarios">
+      <section class="card"><h2>1. Archivo y periodo</h2>
+        <p>Revisa el archivo antes de publicarlo. El listado sirve para elegir materia y secuencia; los nombres de profesores no se vinculan a cuentas. Se ignoran aulas y edificios.</p>
+        <form id="formImportarHorarios">
+          <div class="form-grid">
+            <label>Escuela<select id="escuelaImportacion" required></select></label>
+            <label>Periodo escolar<select id="periodoImportacion" required></select></label>
+            <label class="span-all">Archivo XLSX<input id="archivoHorarios" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required aria-describedby="ayudaArchivoHorarios"></label>
+          </div>
+          <p id="ayudaArchivoHorarios" class="muted">Usa el formato curricular con la hoja «Horarios». Máximo 6 MB y 20,000 filas. El libro debe contener valores, sin fórmulas, macros ni vínculos externos.</p>
+          <button id="revisarHorarios" type="submit" disabled>Revisar archivo</button>
+        </form>
+      </section>
+      <section id="vistaPreviaHorarios" class="card" hidden aria-labelledby="tituloVistaHorarios">
+        <h2 id="tituloVistaHorarios">2. Revisar la oferta</h2>
+        <p id="resumenPeriodoHorarios"></p>
+        <p id="resumenConteosHorarios" class="notice"></p>
+        <p id="incidenciasHorarios"></p>
+        <details><summary>Archivo y comprobación de origen</summary><dl><dt>Archivo</dt><dd id="nombreArchivoHorarios"></dd><dt>Fecha de vencimiento de la vista previa</dt><dd id="venceVistaHorarios"></dd><dt>SHA-256 del archivo</dt><dd id="hashArchivoHorarios" class="hash"></dd><dt>SHA-256 de la oferta</dt><dd id="hashDatosHorarios" class="hash"></dd></dl></details>
+        <div class="form-grid importacion-filtros">
+          <label>Buscar en la oferta<input id="buscarOfertaImportada" type="search" maxlength="100" placeholder="Materia, secuencia, carrera o profesor"></label>
+          <label>Estado<select id="estadoOfertaImportada"><option value="todas">Todas las ofertas</option><option value="habilitadas">Disponibles para nuevas altas</option><option value="pendientes">Fuera de nuevas altas</option></select></label>
+        </div>
+        <p id="contadorOfertaImportada" role="status" aria-live="polite"></p>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Vista previa de horarios"><table><thead><tr><th>Filas del Excel</th><th>Carrera y plan</th><th>Materia y secuencia</th><th>Profesores</th><th>Horario</th><th>Estado</th></tr></thead><tbody id="filasOfertaImportada"></tbody></table></div>
+        <div class="actions"><button id="anteriorOfertaImportada" type="button">Anterior</button><span id="paginaOfertaImportada"></span><button id="siguienteOfertaImportada" type="button">Siguiente</button></div>
+        <details><summary id="tituloProfesoresImportados">Profesores de la oferta</summary><label>Buscar por apellido o nombre<input id="buscarProfesorImportado" type="search" maxlength="100"></label><p id="totalProfesoresImportados"></p><ul id="profesoresImportados" class="profesores-importados"></ul></details>
+        <fieldset id="confirmacionesHorarios"><legend>3. Publicar después de revisar</legend>
+          <label class="review-check"><input id="confirmarPeriodoHorarios" type="checkbox">Confirmo que el archivo corresponde al periodo y a las fechas indicados arriba.</label>
+          <label class="review-check"><input id="confirmarPendientesHorarios" type="checkbox">Revisé las incidencias. Las ofertas pausadas, ambiguas o sin horario seguirán fuera de nuevas altas.</label>
+          <p>La publicación sustituye la oferta vigente de esta escuela y periodo. Conserva las revisiones anteriores, las materias ya registradas y los demás semestres.</p>
+          <button id="publicarHorarios" type="button" disabled>Publicar esta revisión</button>
+        </fieldset>
+        <div id="reciboPublicacionHorarios" class="notice" hidden role="status" aria-live="polite"></div>
+      </section>
+      <section class="card"><h2>Revisiones publicadas</h2><p id="estadoRevisionesHorarios">Selecciona escuela y periodo para consultar su historial.</p><div id="revisionesHorarios"></div></section>
+    </div>
+  </main>
+</div><script type="module" src="./JS/importacion-horarios-page.js?v=1.24.0-8e0d3803ae2b"></script></body></html>
