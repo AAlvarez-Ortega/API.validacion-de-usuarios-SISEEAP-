@@ -1,7 +1,7 @@
-import {requireAdmin,rpc,mensajeError} from './panel-api.js?v=1.24.0-f51ad1994ee7';
-import {text,showSession,fecha} from './panel-ui.js?v=1.24.0-f51ad1994ee7';
-import {supabase} from './coneccionSB.js?v=1.24.0-f51ad1994ee7';
-import {revisionBaja} from './cambios-constancia-form.js?v=1.24.0-f51ad1994ee7';
+import {requireAdmin,rpc,mensajeError} from './panel-api.js?v=1.24.0-8e0d3803ae2b';
+import {text,showSession,fecha} from './panel-ui.js?v=1.24.0-8e0d3803ae2b';
+import {supabase} from './coneccionSB.js?v=1.24.0-8e0d3803ae2b';
+import {revisionBaja} from './cambios-constancia-form.js?v=1.24.0-8e0d3803ae2b';
 const $=id=>document.getElementById(id);let offset=0,seleccion=null,ocupada=false;
 function node(tag,value) { const e=document.createElement(tag);if(value!==undefined)e.textContent=value;return e; }
 async function cargar() {
