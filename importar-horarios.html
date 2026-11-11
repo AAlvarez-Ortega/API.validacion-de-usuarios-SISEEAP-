@@ -5,19 +5,33 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; connect-src https://wdgsvdjojwjebjrpgopn.supabase.co; img-src 'self' data:; style-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Importar horarios · App-SISAEP</title>
-  <link rel="stylesheet" href="./css/panel.css?v=1.24.0-c927c23aab70">
+  <title>Materias por semestre · App-SISAEP</title>
+  <link rel="stylesheet" href="./css/panel.css?v=1.24.0-983a04337a31">
 </head>
 <body><div class="shell">
-  <aside class="side"><img src="./img/Upiicsa.png?v=1.24.0-c927c23aab70" alt="UPIICSA"><span class="eyebrow">App-SISAEP</span>
-    <nav aria-label="Navegación principal"><a href="./inicio.html?v=1.24.0-c927c23aab70">Inicio</a><a href="./materias.html?v=1.24.0-c927c23aab70">Materias y carreras</a><a href="./importar-horarios.html?v=1.24.0-c927c23aab70" aria-current="page">Importar horarios</a><a href="./constancias.html?v=1.24.0-c927c23aab70">Constancias</a><a href="./usuario.html?v=1.24.0-c927c23aab70">Mi perfil</a></nav>
+  <aside class="side"><img src="./img/Upiicsa.png?v=1.24.0-983a04337a31" alt="UPIICSA"><span class="eyebrow">App-SISAEP</span>
+    <nav aria-label="Navegación principal"><a href="./inicio.html?v=1.24.0-983a04337a31">Inicio</a><a href="./materias.html?v=1.24.0-983a04337a31">Materias y carreras</a><a href="./importar-horarios.html?v=1.24.0-983a04337a31" aria-current="page">Materias por semestre</a><a href="./constancias.html?v=1.24.0-983a04337a31">Constancias</a><a href="./usuario.html?v=1.24.0-983a04337a31">Mi perfil</a></nav>
     <button id="btnLogout" type="button">Cerrar sesión</button>
   </aside>
   <main class="content">
-    <header class="header"><div><p class="eyebrow">Oferta semestral</p><h1>Importar horarios</h1></div><div class="user protected"><strong id="nombreUsuario"></strong><span id="rolUsuario"></span><span id="escuelaUsuario"></span></div></header>
+    <header class="header"><div><p class="eyebrow">Oferta académica</p><h1>Materias por semestre</h1></div><div class="user protected"><strong id="nombreUsuario"></strong><span id="rolUsuario"></span><span id="escuelaUsuario"></span></div></header>
     <p id="mensajePanel" class="message" role="status" aria-live="polite">Comprobando acceso…</p>
     <div class="protected importacion-horarios">
-      <section class="card"><h2>1. Archivo y periodo</h2>
+      <details id="registroPeriodoOferta" class="card" hidden>
+        <summary>Registrar un nuevo periodo IPN</summary>
+        <p>Usa las fechas oficiales del calendario escolar. La escuela seleccionada quedará habilitada para cotejar la clave del periodo con las constancias SAES.</p>
+        <form id="formPeriodoOferta">
+          <div class="form-grid">
+            <label>Escuela<select id="escuelaPeriodoOferta" required></select></label>
+            <label>Clave del periodo<input id="clavePeriodoOferta" type="text" maxlength="4" pattern="[0-9]{2}-[12]" placeholder="28-1" required></label>
+            <label>Inicio de clases<input id="inicioPeriodoOferta" type="date" required></label>
+            <label>Fin de clases<input id="finPeriodoOferta" type="date" required></label>
+          </div>
+          <button id="guardarPeriodoOferta" type="submit" disabled>Registrar periodo</button>
+          <p id="mensajePeriodoOferta" role="status" aria-live="polite"></p>
+        </form>
+      </details>
+      <section class="card"><h2>1. Elige el periodo y carga las materias</h2>
         <p>Revisa el archivo antes de publicarlo. El listado sirve para elegir materia y secuencia; los nombres de profesores no se vinculan a cuentas. Se ignoran aulas y edificios.</p>
         <form id="formImportarHorarios">
           <div class="form-grid">
@@ -54,4 +68,4 @@
       <section class="card"><h2>Revisiones publicadas</h2><p id="estadoRevisionesHorarios">Selecciona escuela y periodo para consultar su historial.</p><div id="revisionesHorarios"></div></section>
     </div>
   </main>
-</div><script type="module" src="./JS/importacion-horarios-page.js?v=1.24.0-c927c23aab70"></script></body></html>
+</div><script type="module" src="./JS/importacion-horarios-page.js?v=1.24.0-983a04337a31"></script></body></html>
