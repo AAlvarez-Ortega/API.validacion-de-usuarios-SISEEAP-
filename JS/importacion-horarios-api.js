@@ -1,4 +1,4 @@
-import {supabase,supabaseUrl,supabasePublicKey} from './coneccionSB.js?v=1.24.0-983a04337a31';
+import {supabase,supabaseUrl,supabasePublicKey} from './coneccionSB.js?v=1.24.0-6c9761704713';
 export async function pedirImportacionHorarios(path,{method='GET',body}={}){
   const {data,error}=await supabase.auth.getSession();
   if(error||!data?.session?.access_token)throw new Error('La sesión venció. Vuelve a iniciar sesión.');
