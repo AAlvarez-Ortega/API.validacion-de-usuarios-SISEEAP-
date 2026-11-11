@@ -3,9 +3,9 @@
   "application": "SISAEP · Panel administrativo",
   "version": "1.24.0",
   "revision": "r2",
-  "release": "1.24.0-c927c23aab70",
-  "sourceDigest": "c927c23aab7056bf8f6ede0951d8e9f081564feaca65eeac7d0c8eead6953aa4",
-  "generatorSha256": "7b4c3b6a0583ff1b1d000d7c8668ca7c499e482586d76866113d4611409c32ea",
+  "release": "1.24.0-983a04337a31",
+  "sourceDigest": "983a04337a311b24ca5bb54b400b8ac24d4f870cd75c177e370c37b824e3c35d",
+  "generatorSha256": "2475bde35847711552cf9312cf54a664f034aba2bd4f6a5bb3c94383c6fa7ca0",
   "resourceVersionParameter": "v",
   "dependency": {
     "name": "@supabase/supabase-js",
@@ -22,7 +22,7 @@
     {
       "path": "JS/authGuard.js",
       "bytes": 99,
-      "sha256": "73e74d537a8d3d39b66b00cb13c7f41cdf5a1d775a189f4f9dae69d853e7e8be",
+      "sha256": "e51a216a7cb0c50039f6ee089a4460da3fff67e46fa8acbffb4adb10246cfaca",
       "sourceSha256": "2453cb2a250ca541a829b1d4896e3775476530d6e0b631ad1dbf103a2be9ce61"
     },
     {
@@ -34,7 +34,7 @@
     {
       "path": "JS/cambios-constancia-page.js",
       "bytes": 4087,
-      "sha256": "fdca8e0b257f863cb26cccfcbb7289890951c2435c3ecf0c17c089f69af839b0",
+      "sha256": "9777bd565e17b0fec49b6f85003e3ff57f744b9ef0df73f9a5fef1fb9469cbad",
       "sourceSha256": "a7c3a693c602842fb583a4bb91acce008730b1ed9545afffc9ac938d9ac02314"
     },
     {
@@ -46,7 +46,7 @@
     {
       "path": "JS/catalogo-page.js",
       "bytes": 8143,
-      "sha256": "c50844c1cd87412828f7bb6a3c1cf576ac6d36a121a2178dd51c61d5d1d9877e",
+      "sha256": "0e69714cb3e17c17e61a142e899925a112d3f8e3d60d8d913e18c21e55a80c8f",
       "sourceSha256": "f1dbe102db319eaffe526d74fdf45da30dd20c69646ecc3b984ab43ed82dc656"
     },
     {
@@ -58,7 +58,7 @@
     {
       "path": "JS/coneccionSB_App.js",
       "bytes": 83,
-      "sha256": "846a3b4abf9897ac1becbfba264320f3df05f8eafc5d38dcde897224bfdfa360",
+      "sha256": "82e3c0311a4ca65edaaf7933a2af310ee83cbfd70f8e8b8a8b83bd720a86f349",
       "sourceSha256": "74d267c6ac93fade311a178841048398a04adf341359612e12c2b633a58f7add"
     },
     {
@@ -70,13 +70,13 @@
     {
       "path": "JS/constancias-page.js",
       "bytes": 8777,
-      "sha256": "7c1199c32a566bb24ae650018d842f316837174675d9b18391e8b877938334e7",
+      "sha256": "12556e3cb923f66c7909afec7923424f2546cea4cee4a9d8fdfa514a9f10227f",
       "sourceSha256": "9afd37bf8f17ab6514a17995863f3c1c3673557a44588244222e5c6eb5bd9d95"
     },
     {
       "path": "JS/importacion-horarios-api.js",
       "bytes": 1567,
-      "sha256": "d4089f5679d8f5608a43434859e600458289fe2d149a4cf6c01c42f43c9f4eb8",
+      "sha256": "2adcdbb08aee7dd27844a53caef7f8a4fb9a18cc0c147ddb5db79eb7c00b9f86",
       "sourceSha256": "ff303f6e0001faedaf6221d08cc99957fe764e4b011e744c45027dd7f841ae1b"
     },
     {
@@ -87,32 +87,32 @@
     },
     {
       "path": "JS/importacion-horarios-page.js",
-      "bytes": 10804,
-      "sha256": "bc49ccd11a7fd4a6387e4cc786a9942a8de1ee47c4bb2b94e89fe74a11775366",
-      "sourceSha256": "85389cd099815a3a9d3ffb6c8ccc5322abb6e4a323d1eaef090008ac4bdcc32e"
+      "bytes": 13042,
+      "sha256": "efc0bfbd18169a4577cbaabfbaffc1f0cd9969052479c0a92b4c7beb95bc8097",
+      "sourceSha256": "11763ef4ee7d0ec06328253ff07591ab4b97390fbf040e8b16e866246d319103"
     },
     {
       "path": "JS/login-panel.js",
       "bytes": 1602,
-      "sha256": "9280c63a1e1a860fe2f0ff9dea6c22e6aed8362153267046ff09a6b296592f4d",
+      "sha256": "4c27e8a62f6a7f6b3085ddcd7f73ac3bc35abfdb3c461cc2337b2a70366ccf8a",
       "sourceSha256": "d4a19f40020466319dc8b2bf1ab06fc5cb316a0d4f86008693cba3d8a3fc90b5"
     },
     {
       "path": "JS/panel-api.js",
       "bytes": 1520,
-      "sha256": "8fbb3e676f54471bad30825138fdb9effdfb1fa8790b91518186b095366d0dda",
+      "sha256": "b158ac750d654464856d163e1c53094e7d11569fc653e063d616b5a6b4c68274",
       "sourceSha256": "7b9046ad655d1f7df0b7e4120ab9bdef8a58a9b06e9644825c6354924f60b0d6"
     },
     {
       "path": "JS/panel-page.js",
       "bytes": 1104,
-      "sha256": "4c584852ff982107272b7137c1e260513dcf1016eeed7614749a4ea4281d280a",
+      "sha256": "3fcfea10465b1585dd26a18aba730813d461da1940ffe2a861d193bd76d1165b",
       "sourceSha256": "132948ab15ed73acb446281b791feaa771b83c88807e3beb02a17a15a034d2e1"
     },
     {
       "path": "JS/panel-ui.js",
       "bytes": 1591,
-      "sha256": "72d83f36bf56a787b147d1659fb659e3680860820754a53616bb9bda0ac80148",
+      "sha256": "8103dd254caf845ac1e6eb093bb634a1c1cdcc8999a95ad0c9d66191203a6e78",
       "sourceSha256": "adb83232ed1cb08ef774a6aeb1da6c74029675c27dd6229ca2f14581ef260c29"
     },
     {
@@ -124,13 +124,13 @@
     {
       "path": "JS/piloto-constancias.js",
       "bytes": 1795,
-      "sha256": "c047823577920ccc197f8d69117bca518352b30c668a33edc260742d2212310a",
+      "sha256": "a54310a75977d6ed40cf101bf1bb017c2620e09bc507ed267e779d03a962d300",
       "sourceSha256": "afac05cdc0486088e7af70e85123907a0997a482c4f196c2d7c8f29d11786ea8"
     },
     {
       "path": "JS/solicitudes-page.js",
       "bytes": 6761,
-      "sha256": "3b96e30af354f756e13255d54ebae77e56c209b74e1cc7272df43efc2abb42c8",
+      "sha256": "179abd7abdbd9d8c7bd81bb3f19965019ee80860a0a36e88512662170a195f53",
       "sourceSha256": "7f1b1345c7c65d0cc644562f72a0d2794713a3d470acf58c2d010bda7a990b3e"
     },
     {
@@ -142,14 +142,14 @@
     {
       "path": "cambios-constancia.html",
       "bytes": 3108,
-      "sha256": "b78e5e28c1c818369a12921ce044fc5917ec5b447284af45777e627535d9e9ff",
+      "sha256": "1f6f4944327741939d6b2b78845fb7dd60b32f9495f944e1ceea29e15d4b32fa",
       "sourceSha256": "4b432d10733caf452e11774d23d3b32697696c4d24ad58e824327681db7e1df1"
     },
     {
       "path": "constancias.html",
-      "bytes": 4597,
-      "sha256": "43811d82a89c3405e65f8fcc5ddf7acfde8836320bc21b60da8cd990be207a08",
-      "sourceSha256": "6cbb76cf6b4ab97b3641870282504200bca06eec205670d145d60d8428554858"
+      "bytes": 4601,
+      "sha256": "7758aa6bd72e19dbf0e923700682695dd52272a122e018154932d8a904a4462f",
+      "sourceSha256": "09937158a7aac0a39d25f1902b924392e605bb61729e0149012fb59ecc99ceb6"
     },
     {
       "path": "css/panel.css",
@@ -165,39 +165,39 @@
     },
     {
       "path": "importar-horarios.html",
-      "bytes": 6002,
-      "sha256": "6bd245e894326191d17041f16fd44ff6e6c89110bbfdcdf1159603d22dd8c02b",
-      "sourceSha256": "eed74a30ec77013adf4cacb4ad4ebbb28c8f2fb9ca0b576489ac4b4d0fc8abdb"
+      "bytes": 7046,
+      "sha256": "306e69a1b7376a936913ff020baf6c07e2151ccc3c7032393039f9972e22502b",
+      "sourceSha256": "af444dab52c68ea14ca98ce80e5ada2b31aac01858e22cf46d25fce89b2aa220"
     },
     {
       "path": "index.html",
       "bytes": 1586,
-      "sha256": "e10cf08865d9e18e514b7ea1808f72452f16ab259b0ff531294fa15c0238633e",
+      "sha256": "9a842e27c0402efa0da4497d0bf0aba80babfda8de771dd0edfcee7e2620b380",
       "sourceSha256": "83794c24386101b1b4f4e7f96296ed2c15d50c9dcaef655c99deda6680cb24bf"
     },
     {
       "path": "inicio.html",
-      "bytes": 2477,
-      "sha256": "c2f36b30f916da2352686e10433a202f84eaabd84f4e09b52571a92bb7927293",
-      "sourceSha256": "42f2e63c2c2e7929a31b9e5a1511edd6cc973e44b6c9f05c982ebe484d4bd073"
+      "bytes": 2761,
+      "sha256": "5a9ee4675d06d4a898251b08ce255d96168190eba7bafd579df80828d9130fe8",
+      "sourceSha256": "1bebe8ae0d11c882388c677f21c0013a416f3e9cf0aa937742b3ffa205d85c45"
     },
     {
       "path": "materias.html",
-      "bytes": 4286,
-      "sha256": "447a215dd84f7e38d0860b9ce9db7bd67dab306ce1f04dd6bff7c926ee94332b",
-      "sourceSha256": "6b294eeac4918b8f0cf1f462fe86907cf8c471a36cbc9650b6a35c4bad89d331"
+      "bytes": 4290,
+      "sha256": "4492233066567301604ca7eba7af28942115a7e80abe3ba3547a6cb0a2b23bd2",
+      "sourceSha256": "a73d2378a4126cc85961d1ae01d690b6700d43f0ca7810e84f25e22d158bb789"
     },
     {
       "path": "solicitudes.html",
-      "bytes": 4154,
-      "sha256": "836976edaa435780adf38cdf69f41f52cda80af8c0f6e755f76c7de0864008b7",
-      "sourceSha256": "a4bd084d5b6cd59dc2c103d73d6159f336f4b105abafe1cf35949ce8d6e28c15"
+      "bytes": 4158,
+      "sha256": "4b84505bab236ee3a8da3036648789645a42e554a48b1d36c7440fb17e24f703",
+      "sourceSha256": "eb01f5bbcfee6c340196d50939ba71323720e4470f0c89ea0a465660a4451821"
     },
     {
       "path": "usuario.html",
-      "bytes": 1996,
-      "sha256": "c2f564bf866befa2f97b3e075f9a30ee9abd42e5820fca4fd3a0afdb195c277e",
-      "sourceSha256": "1eeca2f70ed90ff56e6b5cbe13f0e7ad8aa746ad49b624ce28f316c180c79522"
+      "bytes": 2000,
+      "sha256": "9ba4db96fd3d3eabfe5c58700bc6d1be25b36d0f4982fe21104ea2e917547dbd",
+      "sourceSha256": "412a415fbb2e0b1b28b89e7e5761d7d5b6d6508f08df4640d806cd58f0d4d372"
     }
   ]
 }
