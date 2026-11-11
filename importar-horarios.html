@@ -6,11 +6,11 @@
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Materias por semestre · App-SISAEP</title>
-  <link rel="stylesheet" href="./css/panel.css?v=1.24.0-983a04337a31">
+  <link rel="stylesheet" href="./css/panel.css?v=1.24.0-6c9761704713">
 </head>
 <body><div class="shell">
-  <aside class="side"><img src="./img/Upiicsa.png?v=1.24.0-983a04337a31" alt="UPIICSA"><span class="eyebrow">App-SISAEP</span>
-    <nav aria-label="Navegación principal"><a href="./inicio.html?v=1.24.0-983a04337a31">Inicio</a><a href="./materias.html?v=1.24.0-983a04337a31">Materias y carreras</a><a href="./importar-horarios.html?v=1.24.0-983a04337a31" aria-current="page">Materias por semestre</a><a href="./constancias.html?v=1.24.0-983a04337a31">Constancias</a><a href="./usuario.html?v=1.24.0-983a04337a31">Mi perfil</a></nav>
+  <aside class="side"><img src="./img/Upiicsa.png?v=1.24.0-6c9761704713" alt="UPIICSA"><span class="eyebrow">App-SISAEP</span>
+    <nav aria-label="Navegación principal"><a href="./inicio.html?v=1.24.0-6c9761704713">Inicio</a><a href="./materias.html?v=1.24.0-6c9761704713">Materias y carreras</a><a href="./importar-horarios.html?v=1.24.0-6c9761704713" aria-current="page">Materias por semestre</a><a href="./constancias.html?v=1.24.0-6c9761704713">Constancias</a><a href="./usuario.html?v=1.24.0-6c9761704713">Mi perfil</a></nav>
     <button id="btnLogout" type="button">Cerrar sesión</button>
   </aside>
   <main class="content">
@@ -39,7 +39,8 @@
             <label>Periodo escolar<select id="periodoImportacion" required></select></label>
             <label class="span-all">Archivo XLSX<input id="archivoHorarios" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required aria-describedby="ayudaArchivoHorarios"></label>
           </div>
-          <p id="ayudaArchivoHorarios" class="muted">Usa el formato curricular con la hoja «Horarios». Máximo 6 MB y 20,000 filas. El libro debe contener valores, sin fórmulas, macros ni vínculos externos.</p>
+          <p id="ayudaArchivoHorarios" class="muted">Usa la hoja «Horarios». Máximo 6 MB y 20,000 filas. Captura valores y conserva los encabezados. Reemplaza la fila de ejemplo por los horarios oficiales.</p>
+          <p><a class="button" href="./plantilla-horarios.xlsx?v=1.24.0-6c9761704713" download>Descargar plantilla Excel con ejemplo</a></p>
           <button id="revisarHorarios" type="submit" disabled>Revisar archivo</button>
         </form>
       </section>
@@ -48,6 +49,16 @@
         <p id="resumenPeriodoHorarios"></p>
         <p id="resumenConteosHorarios" class="notice"></p>
         <p id="incidenciasHorarios"></p>
+        <button id="descargarIncidenciasHorarios" type="button" hidden>Descargar incidencias de todas las filas (CSV)</button>
+        <p id="estadoDescargaIncidencias" role="status" aria-live="polite"></p>
+        <details id="comparacionOferta" open>
+          <summary>Cambios frente a la oferta vigente</summary>
+          <p id="resumenComparacionOferta" role="status" aria-live="polite"></p>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Comparación con la oferta vigente">
+            <table><thead><tr><th scope="col">Cambio</th><th scope="col">Materia y secuencia</th><th scope="col">Oferta vigente</th><th scope="col">Excel nuevo</th></tr></thead><tbody id="filasComparacionOferta"></tbody></table>
+          </div>
+          <div class="actions"><button id="anteriorComparacionOferta" type="button">Anterior</button><span id="paginaComparacionOferta"></span><button id="siguienteComparacionOferta" type="button">Siguiente</button><button id="actualizarComparacionOferta" type="button">Actualizar comparación</button></div>
+        </details>
         <details><summary>Archivo y comprobación de origen</summary><dl><dt>Archivo</dt><dd id="nombreArchivoHorarios"></dd><dt>Fecha de vencimiento de la vista previa</dt><dd id="venceVistaHorarios"></dd><dt>SHA-256 del archivo</dt><dd id="hashArchivoHorarios" class="hash"></dd><dt>SHA-256 de la oferta</dt><dd id="hashDatosHorarios" class="hash"></dd></dl></details>
         <div class="form-grid importacion-filtros">
           <label>Buscar en la oferta<input id="buscarOfertaImportada" type="search" maxlength="100" placeholder="Materia, secuencia, carrera o profesor"></label>
@@ -66,6 +77,36 @@
         <div id="reciboPublicacionHorarios" class="notice" hidden role="status" aria-live="polite"></div>
       </section>
       <section class="card"><h2>Revisiones publicadas</h2><p id="estadoRevisionesHorarios">Selecciona escuela y periodo para consultar su historial.</p><div id="revisionesHorarios"></div></section>
+      <section id="detalleRevisionOferta" class="card" hidden aria-labelledby="tituloRevisionOferta">
+        <h2 id="tituloRevisionOferta">Detalle de la revisión</h2>
+        <p id="estadoDetalleRevision" role="status" aria-live="polite"></p>
+        <p id="motivoRevisionOferta"></p>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Materias de la revisión">
+          <table><thead><tr><th scope="col">Carrera y plan</th><th scope="col">Materia y secuencia</th><th scope="col">Profesores</th><th scope="col">Horario</th><th scope="col">Estado</th></tr></thead><tbody id="filasDetalleRevision"></tbody></table>
+        </div>
+        <div class="actions"><button id="anteriorRevisionOferta" type="button">Anterior</button><span id="paginaRevisionOferta"></span><button id="siguienteRevisionOferta" type="button">Siguiente</button></div>
+        <form id="formRestaurarOferta" hidden>
+          <p>Usa esta revisión para publicar una nueva oferta. Las clases ya registradas conservan sus datos.</p>
+          <label>Motivo de la corrección<textarea id="motivoRestaurarOferta" minlength="10" maxlength="500" required></textarea></label>
+          <label class="review-check"><input id="confirmarRestaurarOferta" type="checkbox" required>Confirmo que quiero publicar esta oferta como una revisión nueva.</label>
+          <button id="restaurarOferta" type="submit">Publicar revisión recuperada</button>
+        </form>
+      </section>
+      <details id="corregirPeriodoOferta" class="card" hidden>
+        <summary>Corregir las fechas del periodo seleccionado</summary>
+        <p id="fechasOriginalesOferta"></p>
+        <form id="formCorregirPeriodo">
+          <div class="form-grid">
+            <label>Inicio de clases<input id="inicioCorregirPeriodo" type="date" required></label>
+            <label>Fin de clases<input id="finCorregirPeriodo" type="date" required></label>
+          </div>
+          <label>Motivo de la corrección<textarea id="motivoCorregirPeriodo" minlength="10" maxlength="500" required></textarea></label>
+          <label class="review-check"><input id="confirmarCorregirPeriodo" type="checkbox" required>Comprobé las fechas contra el calendario oficial.</label>
+          <button id="guardarCorreccionPeriodo" type="submit">Guardar corrección</button>
+        </form>
+        <p id="estadoCorreccionPeriodo" role="status" aria-live="polite"></p>
+        <ul id="historialCorreccionPeriodo"></ul>
+      </details>
     </div>
   </main>
-</div><script type="module" src="./JS/importacion-horarios-page.js?v=1.24.0-983a04337a31"></script></body></html>
+</div><script type="module" src="./JS/importacion-horarios-page.js?v=1.24.0-6c9761704713"></script></body></html>
