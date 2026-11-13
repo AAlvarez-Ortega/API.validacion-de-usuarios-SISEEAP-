@@ -1,7 +1,7 @@
-import {requireAdmin,rpc} from './panel-api.js?v=1.24.0-2ccfdcd23787';
-import {showSession,text,fecha} from './panel-ui.js?v=1.24.0-2ccfdcd23787';
-import {pedirImportacionHorarios as pedir,archivoComoBase64} from './importacion-horarios-api.js?v=1.24.0-2ccfdcd23787';
-import {comprobarArchivoHorarios,datosPublicacionHorarios,textoHorarioOferta,textoMotivoOferta} from './importacion-horarios-form.js?v=1.24.0-2ccfdcd23787';
+import {requireAdmin,rpc} from './panel-api.js?v=1.24.0-576d56b72d26';
+import {showSession,text,fecha} from './panel-ui.js?v=1.24.0-576d56b72d26';
+import {pedirImportacionHorarios as pedir,archivoComoBase64} from './importacion-horarios-api.js?v=1.24.0-576d56b72d26';
+import {comprobarArchivoHorarios,datosPublicacionHorarios,textoHorarioOferta,textoMotivoOferta} from './importacion-horarios-form.js?v=1.24.0-576d56b72d26';
 
 const el=id=>document.getElementById(id),storageKey='sisaep-importacion-horarios';
 let context,session,preview,busy=false,offset=0,generation=0,historyGeneration=0,searchTimer,uploadIntent;

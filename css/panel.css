@@ -16,3 +16,6 @@ textarea{font:inherit;padding:11px;border:1px solid #bdcec3;border-radius:8px;ma
 #formRestaurarOferta textarea,#formCorregirPeriodo textarea{width:100%;min-height:6rem;padding:10px;font:inherit;border:1px solid var(--line);border-radius:8px}
 #formCorregirPeriodo>label{margin-top:14px}
 #revisionesHorarios li{margin-bottom:10px}
+.chatRevisionMensaje { padding: .8rem 0; border-bottom: 1px solid var(--line, #d4e0d7); overflow-wrap: anywhere; }
+.chatRevisionMensaje small { display: block; }
+.chatRevisionMensaje p { white-space: pre-wrap; margin: .4rem 0 0; }

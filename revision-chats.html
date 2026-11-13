@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; connect-src https://wdgsvdjojwjebjrpgopn.supabase.co; img-src 'self' data:; style-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Revisión de chats · App-SISAEP</title><link rel="stylesheet" href="./css/panel.css?v=1.24.0-576d56b72d26"></head>
+<body><div class="shell"><aside class="side"><img src="./img/Upiicsa.png?v=1.24.0-576d56b72d26" alt="UPIICSA"><span class="eyebrow">App-SISAEP</span><nav aria-label="Navegación principal"><a href="./inicio.html?v=1.24.0-576d56b72d26">Inicio</a><a href="./solicitudes.html?v=1.24.0-576d56b72d26">Solicitudes</a><a href="./constancias.html?v=1.24.0-576d56b72d26">Constancias</a><a href="./materias.html?v=1.24.0-576d56b72d26">Materias y carreras</a><a href="./importar-horarios.html?v=1.24.0-576d56b72d26">Materias por semestre</a><a href="./usuario.html?v=1.24.0-576d56b72d26">Mi perfil</a><a href="./revision-chats.html?v=1.24.0-576d56b72d26" aria-current="page" data-revision-chats>Revisión de chats</a></nav><button id="btnLogout" type="button">Cerrar sesión</button></aside>
+<main class="content"><header class="header"><div><h1>Revisión de chats</h1></div><div class="user protected"><strong id="nombreUsuario"></strong><span id="rolUsuario"></span><span id="escuelaUsuario"></span></div></header>
+<p id="mensajePanel" role="status" class="message">Comprobando acceso…</p>
+<section id="revisionChats" hidden>
+  <p class="notice">Consulta conversaciones para revisar reportes de conducta. Cada acceso queda registrado.</p>
+  <div class="requests"><section aria-label="Conversaciones">
+    <form id="buscarChats" class="card"><label>Nombre, título o identificador<input id="filtroChats" type="search" maxlength="120"></label><button type="submit">Buscar</button></form>
+    <div id="listaChats" class="items"></div><div class="pagination"><button id="chatsAnterior" type="button">Anterior</button><button id="chatsSiguiente" type="button">Siguiente</button></div>
+  </section><section class="card" aria-label="Mensajes">
+    <h2 id="chatTitulo">Selecciona una conversación</h2>
+    <p id="chatParticipantes"></p>
+    <form id="abrirChat" hidden><label>Motivo o referencia del reporte<textarea id="chatMotivo" rows="2" minlength="8" maxlength="500" required></textarea></label><button type="submit" class="primary">Consultar mensajes</button></form>
+    <div id="chatMensajes"></div><div class="pagination" id="chatPaginacion" hidden><button id="mensajesAnterior" type="button">Más recientes</button><button id="mensajesSiguiente" type="button">Más antiguos</button></div>
+  </section></div>
+</section></main></div><script type="module" src="./JS/revision-chats-page.js?v=1.24.0-576d56b72d26"></script></body></html>

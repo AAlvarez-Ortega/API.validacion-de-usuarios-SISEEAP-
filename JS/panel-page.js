@@ -1,5 +1,5 @@
-import { requireAdmin, rpc, mensajeError } from "./panel-api.js?v=1.24.0-2ccfdcd23787";
-import { text, showSession, nombreRol } from "./panel-ui.js?v=1.24.0-2ccfdcd23787";
+import { requireAdmin, rpc, mensajeError } from "./panel-api.js?v=1.24.0-576d56b72d26";
+import { text, showSession, nombreRol } from "./panel-ui.js?v=1.24.0-576d56b72d26";
 
 function filaPeriodo(periodo, escuela) {
   const fila = document.createElement("li");

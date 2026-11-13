@@ -1,4 +1,4 @@
-import { supabase } from "./coneccionSB.js?v=1.24.0-2ccfdcd23787";
+import { supabase } from "./coneccionSB.js?v=1.24.0-576d56b72d26";
 export function text(id, value) {
   const element = document.getElementById(id);
   if (element) element.textContent = value ?? "—";
@@ -12,6 +12,14 @@ export function showSession(session) {
     ? "Los conteos corresponden a todas las escuelas. Cada solicitud requiere revisión del responsable antes de cambiar su estado."
     : "Los conteos corresponden a tu escuela. Cada solicitud requiere revisión del responsable antes de cambiar su estado.");
   document.body.dataset.ready = "true";
+  const nav = document.querySelector?.(".side nav");
+  if (session.rol === "administrador_aplicacion" && nav && !nav.querySelector("[data-revision-chats]")) {
+    const link = document.createElement("a");
+    link.dataset.revisionChats = "";
+    link.href = "./revision-chats.html";
+    link.textContent = "Revisión de chats";
+    nav.append(link);
+  }
 }
 export function nombreRol(session) {
   return session.rol === "administrador_aplicacion"
@@ -22,7 +30,7 @@ document.getElementById("btnLogout")?.addEventListener("click", async () => {
   button.disabled = true;
   const { error } = await supabase.auth.signOut({ scope: "local" });
   if (error) { text("mensajePanel", "No se pudo cerrar sesión. Intenta de nuevo."); button.disabled = false; return; }
-  location.replace("./index.html?v=1.24.0-2ccfdcd23787");
+  location.replace("./index.html?v=1.24.0-576d56b72d26");
 });
 export function fecha(value) {
   return value ? new Date(value).toLocaleString("es-MX", { dateStyle: "medium", timeStyle: "short" }) : "—";
